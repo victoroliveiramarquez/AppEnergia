@@ -7,7 +7,7 @@ import retrofit2.http.GET
 // Interface de Retrofit
 interface SmartSolarService {
     @Mock
-    @MockResponse(body = "detalles.json") // Nombre del archivo JSON en assets
+    @MockResponse(body = "detalles.json")
     @GET("/")
     suspend fun getSmartSolarDetails(): SmartSolarDetails
 }

@@ -3,13 +3,21 @@ package com.aplicacion2.appenergia.filtros
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
+import com.aplicacion2.appenergia.service.FacturaAdapter
+import com.aplicacion2.appenergia.service.RetrofitClient
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainFacturaBinding
+    private lateinit var facturaAdapter: FacturaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,6 +25,14 @@ class MainActivityFactura : AppCompatActivity() {
         // Inicializar ViewBinding
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Configurar RecyclerView
+        facturaAdapter = FacturaAdapter(emptyList())  // Inicializar con lista vacía
+        binding.rvFacturas.layoutManager = LinearLayoutManager(this)
+        binding.rvFacturas.adapter = facturaAdapter
+
+        // Cargar facturas desde la API
+        loadFacturasFromApi()
 
         // Configurar el botón "Consumo" para que navegue a la Activity SmartSolar
         binding.ibAtras.setOnClickListener {
@@ -30,6 +46,21 @@ class MainActivityFactura : AppCompatActivity() {
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
             finish() // Finalizar la Activity actual para destruirla
+        }
+    }
+
+    private fun loadFacturasFromApi() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Llamar a la API y obtener las facturas
+                val response = RetrofitClient.facturaService.getFacturas()
+                withContext(Dispatchers.Main) {
+                    // Actualizar el RecyclerView con las facturas obtenidas
+                    facturaAdapter.updateData(response.facturas)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace() // Manejo de errores
+            }
         }
     }
 
