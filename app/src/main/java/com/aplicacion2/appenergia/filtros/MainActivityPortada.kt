@@ -8,6 +8,7 @@ import com.aplicacion2.appenergia.filtros.MainActivityFactura
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainPortadaBinding
 
+@Suppress("DEPRECATION")
 class MainActivityPortada : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainPortadaBinding
@@ -30,5 +31,11 @@ class MainActivityPortada : AppCompatActivity() {
             val intent = Intent(this, MainActivitySmartSolar::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Cierra todas las actividades y finaliza la aplicación cuando se presiona "Atrás"
+        finishAffinity()
     }
 }
