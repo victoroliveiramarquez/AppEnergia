@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.aplicacion2.appenergia.samartsolar.fragments.EnergiaFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/tvFrase"
+        android:layout_width="wrap_content"
+        android:layout_height="141dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="420dp"
+        android:layout_marginRight="70dp"
+        android:contentDescription="Anotación estatica"
+        android:gravity="center"
+        android:text="Estamos trabajando en mejorar la App. Tus paneles solares siguen produciendo, en breve podrás seguir viendo tu produccion solar. Sentimos las molestias."
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="296dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="70dp"
+        android:src="@drawable/plan_gestiones" />
+
+</FrameLayout>

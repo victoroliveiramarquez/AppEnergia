@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFF</color>  <!-- Color blanco para los textos -->
+    <color name="green">#4CAF50</color> <!-- Color verde para el estado seleccionado -->
+    <color name="gray">#B0B0B0</color> <!-- Color gris para el estado no seleccionado -->
+</resources>
