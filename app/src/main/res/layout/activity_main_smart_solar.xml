@@ -28,7 +28,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="12dp"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/flContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -56,11 +56,11 @@
         android:id="@+id/flContainer"
         android:layout_width="398dp"
         android:layout_height="667dp"
-        android:background="@android:color/white"
+        android:layout_marginBottom="36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button

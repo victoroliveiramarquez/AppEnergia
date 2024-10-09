@@ -2,11 +2,14 @@ package com.aplicacion2.appenergia.samartsolar.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import co.infinum.retromock.Retromock
 import com.aplicacion2.appenergia.samartsolar.SmartSolarDetails
 import com.aplicacion2.appenergia.samartsolar.SmartSolarService
@@ -44,6 +47,12 @@ class DetallesFragment : Fragment() {
         tvCompensacion = view.findViewById(R.id.mock4)
         tvPotencia = view.findViewById(R.id.mock5)
 
+        // Inicializar el botón de información y configurar su listener
+        val infoButton: ImageView = view.findViewById(R.id.ibInfo)
+        infoButton.setOnClickListener {
+            infoDialog() // Mostrar el diálogo de información al hacer clic
+        }
+
         // Llamada simulada a la API con Retromock
         loadSmartSolarDetails()
     }
@@ -51,7 +60,7 @@ class DetallesFragment : Fragment() {
     private fun loadSmartSolarDetails() {
         // Crear cliente Retrofit
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dummy.api/") // URL base ficticia
+            .baseUrl("https://appenergia.api/") // URL base ficticia
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -81,5 +90,25 @@ class DetallesFragment : Fragment() {
         tvTipoAutoconsumo.text = details.tipoAutoconsumo
         tvCompensacion.text = details.compensacion
         tvPotencia.text = details.potencia
+    }
+
+    // Función para mostrar el diálogo de información
+    private fun infoDialog() {
+        // Inflar el layout personalizado para el popup
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_info_autoconsumo, null)
+
+        // Crear el AlertDialog con el layout personalizado
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        // Configurar la acción del botón "Aceptar" dentro del dialogView
+        val btnAceptar: Button = dialogView.findViewById(R.id.btnAceptar)
+        btnAceptar.setOnClickListener {
+            dialogBuilder.dismiss() // Cierra el dialog cuando se pulsa el botón "Aceptar"
+        }
+
+        // Mostrar el AlertDialog
+        dialogBuilder.show()
     }
 }
