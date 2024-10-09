@@ -14,6 +14,7 @@ object RetrofitClient {
     val facturaService: FacturaService = retrofit.create(FacturaService::class.java)
 }
 
+
 interface FacturaService {
     @GET("facturas") // Endpoint de la API
     suspend fun getFacturas(): FacturaResponse
