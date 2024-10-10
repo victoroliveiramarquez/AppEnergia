@@ -11,8 +11,8 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="386dp"
-        android:layout_height="119dp"
+        android:layout_width="389dp"
+        android:layout_height="118dp"
         android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
         android:minHeight="?attr/actionBarSize"
@@ -26,20 +26,20 @@
         android:id="@+id/txtFacturas"
         android:layout_width="159dp"
         android:layout_height="62dp"
-        android:layout_marginEnd="224dp"
+        android:layout_marginEnd="212dp"
         android:text="Facturas"
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Texto informativo para cuando no haya facturas -->
 
     <Button
         android:id="@+id/ibAtras"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="40dp"
         android:background="@android:color/transparent"
         android:drawableLeft="@drawable/baseline_chevron_left_24"
         android:drawableTint="#8BC34A"
@@ -53,16 +53,17 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFacturas"
-        android:layout_width="385dp"
-        android:layout_height="672dp"
+        android:layout_width="400dp"
+        android:layout_height="710dp"
         android:clipToPadding="false"
         android:paddingTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- Texto informativo para cuando no haya facturas -->
     <TextView
         android:id="@+id/tvNoFacturas"
         android:layout_width="wrap_content"
