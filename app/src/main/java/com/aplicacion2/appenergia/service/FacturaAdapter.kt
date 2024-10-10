@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.service
 
+import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.facturas_tfc.R
 import java.text.SimpleDateFormat
@@ -21,7 +23,7 @@ fun String.toFormattedDate(): String {
 }
 
 // Adaptador del RecyclerView para mostrar las facturas
-class FacturaAdapter(private var facturas: List<Factura>) : RecyclerView.Adapter<FacturaAdapter.FacturaViewHolder>() {
+class FacturaAdapter(private var facturas: List<Factura>, private val context: Context) : RecyclerView.Adapter<FacturaAdapter.FacturaViewHolder>() {
 
     // ViewHolder para cada elemento de la lista de facturas
     class FacturaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -61,9 +63,32 @@ class FacturaAdapter(private var facturas: List<Factura>) : RecyclerView.Adapter
 
         // Configurar el icono de la flecha hacia la derecha
         holder.icon.setImageResource(R.drawable.ic_chevron_right_24)
+
+        // Configurar el clic en la celda para mostrar el popup de información
+        holder.itemView.setOnClickListener {
+            showInfoPopup()
+        }
     }
 
     override fun getItemCount(): Int = facturas.size
+
+    // Función para mostrar el AlertDialog
+    private fun showInfoPopup() {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
+
+        val dialogBuilder = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
+
+        // Configurar la acción del botón "Aceptar" dentro del dialogView
+        val btnAceptar: TextView = dialogView.findViewById(R.id.btnCerrar)
+        btnAceptar.setOnClickListener {
+            dialogBuilder.dismiss() // Cierra el dialog cuando se pulsa el botón "Aceptar"
+        }
+
+        // Mostrar el AlertDialog con el diseño personalizado
+        dialogBuilder.show()
+    }
 
     // Función para actualizar los datos del adaptador
     fun updateData(newFacturas: List<Factura>) {
@@ -71,6 +96,9 @@ class FacturaAdapter(private var facturas: List<Factura>) : RecyclerView.Adapter
         notifyDataSetChanged()
     }
 }
+
+
+
 
 
 
