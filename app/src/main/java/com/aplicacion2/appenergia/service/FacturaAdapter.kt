@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.facturas_tfc.R
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -54,12 +56,23 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             holder.estado.visibility = View.GONE
         }
 
-        // Mostrar el importe alineado a la derecha
-        holder.importe.text = String.format("%.2f €", factura.importeOrdenacion)
+        // Formatear el importe para mostrar coma en lugar de punto
+        val decimalFormatSymbols = DecimalFormatSymbols().apply {
+            decimalSeparator = ','
+            groupingSeparator = '.'
+        }
+        val decimalFormat = DecimalFormat("###,##0.00", decimalFormatSymbols)
+        holder.importe.text = "${decimalFormat.format(factura.importeOrdenacion)} €"
         holder.importe.gravity = Gravity.END
 
-        // Configurar el divider para que se muestre entre los elementos
-        holder.divider.visibility = View.VISIBLE
+        // Mostrar u ocultar el estado y ajustar la posición del divider
+        if (factura.descEstado == "Pendiente de pago") {
+            holder.estado.text = factura.descEstado
+            holder.estado.visibility = View.VISIBLE
+            holder.estado.setTextColor(Color.RED)
+        } else {
+            holder.estado.visibility = View.INVISIBLE
+        }
 
         // Configurar el icono de la flecha hacia la derecha
         holder.icon.setImageResource(R.drawable.ic_chevron_right_24)
@@ -96,6 +109,7 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         notifyDataSetChanged()
     }
 }
+
 
 
 

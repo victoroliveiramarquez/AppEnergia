@@ -23,7 +23,7 @@
         android:id="@+id/tvEstado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#AB1A1A"
+        android:textColor="#9B1818"
         android:textSize="19sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
