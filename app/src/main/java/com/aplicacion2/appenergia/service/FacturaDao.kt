@@ -6,6 +6,16 @@ import androidx.room.Query
 
 @Dao
 interface FacturaDao {
+
+    @Query("SELECT * FROM facturas WHERE descEstado LIKE :estado AND fecha BETWEEN :fechaDesde AND :fechaHasta AND importeOrdenacion BETWEEN :minImporte AND :maxImporte")
+    suspend fun filterFacturasExact(
+        estado: String,
+        fechaDesde: String,
+        fechaHasta: String,
+        minImporte: Double,
+        maxImporte: Double
+    ): List<Factura>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
 

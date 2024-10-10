@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Factura::class], version = 1)
+@Database(entities = [Factura::class], version = 2)
 abstract class FacturaDatabase : RoomDatabase() {
     abstract fun facturaDao(): FacturaDao
 
@@ -18,8 +18,10 @@ abstract class FacturaDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     FacturaDatabase::class.java,
-                    "factura_database"
-                ).build()
+                    "factura-database"
+                )
+                    .fallbackToDestructiveMigration() // Añadir esto si no quieres manejar migraciones manuales
+                    .build()
                 INSTANCE = instance
                 instance
             }

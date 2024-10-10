@@ -73,9 +73,7 @@
         android:visibility="gone"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@+id/rvFacturas"
-        app:layout_constraintBottom_toBottomOf="@+id/rvFacturas"
-        app:layout_constraintStart_toStartOf="@+id/rvFacturas"
-        app:layout_constraintEnd_toEndOf="@+id/rvFacturas" />
+        app:layout_constraintStart_toStartOf="@+id/txtFacturas" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -84,5 +82,6 @@
         android:src="@drawable/filtericon_3x"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

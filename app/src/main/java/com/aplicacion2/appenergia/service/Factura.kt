@@ -5,9 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "facturas")
 data class Factura(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0, // Hacer que el id se autogenere
     val descEstado: String,
     val importeOrdenacion: Double,
     val fecha: String
 )
-
