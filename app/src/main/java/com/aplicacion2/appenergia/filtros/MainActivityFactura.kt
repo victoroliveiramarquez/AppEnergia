@@ -112,12 +112,8 @@ class MainActivityFactura : AppCompatActivity() {
             )
 
             withContext(Dispatchers.Main) {
-                if (filteredFacturas.isEmpty()) {
-                    displayNoFacturasMessage(true) // Mostrar mensaje si no hay facturas
-                } else {
-                    facturaAdapter.updateData(filteredFacturas)
-                    displayNoFacturasMessage(false) // Ocultar mensaje si hay facturas
-                }
+                facturaAdapter.updateData(filteredFacturas)
+                displayNoFacturasMessage(filteredFacturas.isEmpty()) // Mostrar mensaje si no hay facturas
             }
         }
     }
@@ -136,6 +132,8 @@ class MainActivityFactura : AppCompatActivity() {
         finish() // Destruir la Activity al presionar el botón "Atrás"
     }
 }
+
+
 
 
 

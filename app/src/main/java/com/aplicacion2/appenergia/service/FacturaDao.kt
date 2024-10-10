@@ -7,7 +7,14 @@ import androidx.room.Query
 @Dao
 interface FacturaDao {
 
-    @Query("SELECT * FROM facturas WHERE descEstado LIKE :estado AND fecha BETWEEN :fechaDesde AND :fechaHasta AND importeOrdenacion BETWEEN :minImporte AND :maxImporte")
+    @Query("""
+    SELECT * FROM facturas 
+    WHERE 
+        (:estado IS NULL OR descEstado = :estado) AND
+        (:minImporte IS NULL OR :maxImporte IS NULL OR importeOrdenacion BETWEEN :minImporte AND :maxImporte) AND
+        (:fechaDesde IS NULL OR fecha >= :fechaDesde) AND
+        (:fechaHasta IS NULL OR fecha <= :fechaHasta)
+    """)
     suspend fun filterFacturasExact(
         estado: String,
         fechaDesde: String,

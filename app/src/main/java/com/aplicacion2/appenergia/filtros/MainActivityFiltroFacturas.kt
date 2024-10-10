@@ -134,10 +134,10 @@ class MainActivityFiltroFactura : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val importeSeleccionado = binding.seekBar.progress
+        val importeSeleccionado = binding.seekBar.progress / 100.0 // Convertir a valor decimal
         val estadoSeleccionado = when {
             binding.chkPagadas.isChecked -> "Pagada"
-            binding.chkPendientesPago.isChecked -> "Pendiente de pago"
+            binding.chkPendientesPago.isChecked -> "Pendientes de pago"
             else -> ""
         }
         val fechaDesde = binding.button2.text.toString()
@@ -154,8 +154,8 @@ class MainActivityFiltroFactura : AppCompatActivity() {
     }
 
     private fun clearFilters() {
-        binding.seekBar.progress = 1
-        binding.textView5.text = "1 €"
+        binding.seekBar.progress = 100
+        binding.textView5.text = "1,00 €"
 
         binding.chkPagadas.isChecked = false
         binding.chkAnuladas.isChecked = false

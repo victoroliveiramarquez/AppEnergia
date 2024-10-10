@@ -54,6 +54,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             holder.estado.text = factura.descEstado
             holder.estado.visibility = View.VISIBLE
             holder.estado.setTextColor(Color.RED)
+        } else if (factura.descEstado == "Pagada") {
+            holder.estado.visibility = View.INVISIBLE
         } else {
             holder.estado.visibility = View.GONE
         }
@@ -67,10 +69,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         holder.importe.text = "${decimalFormat.format(factura.importeOrdenacion)} €"
         holder.importe.gravity = Gravity.END
 
-        // Mantener el divider en su posición ajustando la visibilidad y márgenes
+        // Ajustar la posición del divider en función de la visibilidad de `tvEstado`
         holder.divider.visibility = View.VISIBLE
-
-        // Añadir márgenes para mantener el `divider` en su posición, aunque `tvEstado` no esté visible
         val layoutParams = holder.divider.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.topMargin = if (holder.estado.visibility == View.VISIBLE) 16 else 32
         holder.divider.layoutParams = layoutParams

@@ -20,7 +20,7 @@ abstract class FacturaDatabase : RoomDatabase() {
                     FacturaDatabase::class.java,
                     "factura-database"
                 )
-                    .fallbackToDestructiveMigration() // Añadir esto si no quieres manejar migraciones manuales
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
