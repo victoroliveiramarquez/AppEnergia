@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
@@ -25,7 +26,8 @@ fun String.toFormattedDate(): String {
 }
 
 // Adaptador del RecyclerView para mostrar las facturas
-class FacturaAdapter(private var facturas: List<Factura>, private val context: Context) : RecyclerView.Adapter<FacturaAdapter.FacturaViewHolder>() {
+class FacturaAdapter(private var facturas: List<Factura>, private val context: Context) :
+    RecyclerView.Adapter<FacturaAdapter.FacturaViewHolder>() {
 
     // ViewHolder para cada elemento de la lista de facturas
     class FacturaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -65,14 +67,13 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         holder.importe.text = "${decimalFormat.format(factura.importeOrdenacion)} €"
         holder.importe.gravity = Gravity.END
 
-        // Mostrar u ocultar el estado y ajustar la posición del divider
-        if (factura.descEstado == "Pendiente de pago") {
-            holder.estado.text = factura.descEstado
-            holder.estado.visibility = View.VISIBLE
-            holder.estado.setTextColor(Color.RED)
-        } else {
-            holder.estado.visibility = View.INVISIBLE
-        }
+        // Mantener el divider en su posición ajustando la visibilidad y márgenes
+        holder.divider.visibility = View.VISIBLE
+
+        // Añadir márgenes para mantener el `divider` en su posición, aunque `tvEstado` no esté visible
+        val layoutParams = holder.divider.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.topMargin = if (holder.estado.visibility == View.VISIBLE) 16 else 32
+        holder.divider.layoutParams = layoutParams
 
         // Configurar el icono de la flecha hacia la derecha
         holder.icon.setImageResource(R.drawable.ic_chevron_right_24)
@@ -104,11 +105,13 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
     }
 
     // Función para actualizar los datos del adaptador
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newFacturas: List<Factura>) {
         facturas = newFacturas
         notifyDataSetChanged()
     }
 }
+
 
 
 
