@@ -1,13 +1,17 @@
 package com.aplicacion2.appenergia.filtros
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
+import com.aplicacion2.appenergia.service.Factura
 import com.aplicacion2.appenergia.service.FacturaAdapter
 import com.aplicacion2.appenergia.service.FacturaDao
 import com.aplicacion2.appenergia.service.FacturaDatabase
@@ -23,9 +27,16 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var binding: ActivityMainFacturaBinding
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaDao: FacturaDao
+    private lateinit var sharedPreferences: SharedPreferences
+
+    // Crear la lista vacía como contenedor intermediario para almacenar las facturas filtradas
+    private var filteredFacturasContainer: MutableList<Factura> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inicializar SharedPreferences
+        sharedPreferences = getSharedPreferences("filtros_facturas", Context.MODE_PRIVATE)
 
         // Inicializar ViewBinding
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
@@ -57,11 +68,10 @@ class MainActivityFactura : AppCompatActivity() {
         // Cargar y mostrar las facturas desde Room y la API
         loadFacturasFromDatabase()
 
-        // Verificar si hay filtros en el Intent
-        val estado = intent.getStringExtra("estado")
-
-        if (!estado.isNullOrEmpty()) {
-            applyFilters(estado)
+        // Obtener los estados de SharedPreferences
+        val estados = sharedPreferences.getStringSet("estados", emptySet())?.toList()
+        if (!estados.isNullOrEmpty()) {
+            applyFilters(estados)  // Pasar la lista de estados
         } else {
             loadFacturasFromApi() // Si no hay filtros, cargar desde la API
         }
@@ -91,39 +101,54 @@ class MainActivityFactura : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val facturasFromDb = facturaDao.getAllFacturas()
             withContext(Dispatchers.Main) {
-                facturaAdapter.updateData(facturasFromDb)
-                displayNoFacturasMessage(facturasFromDb.isEmpty())
+                // Almacenar las facturas obtenidas en el contenedor intermedio
+                filteredFacturasContainer.clear()
+                filteredFacturasContainer.addAll(facturasFromDb)
+
+                // Actualizar el RecyclerView con las facturas del contenedor intermedio
+                facturaAdapter.updateData(filteredFacturasContainer)
+                displayNoFacturasMessage(filteredFacturasContainer.isEmpty())
             }
         }
     }
 
-    private fun applyFilters(estado: String?) {
+    private fun applyFilters(estados: List<String>?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            // Filtrar solo si el estado es "Pagada" o "Pendiente de pago".
-            val filteredFacturas = if (estado == "Pagada" || estado == "Pendiente de pago") {
-                facturaAdapter.updateData(emptyList())
-                facturaDao.filterFacturasByEstado(estado)
-            } else {
-                emptyList() // Si no es "Pagada" o "Pendiente de pago", no hay facturas disponibles.
+            val estadosValidos = estados?.filter { it == "Pagada" || it == "Pendiente de pago" } ?: emptyList()
+
+            if (estadosValidos.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los estados seleccionados", Toast.LENGTH_SHORT).show()
+                    displayNoFacturasMessage(true)
+                }
+                return@launch
             }
+
+            // Filtrar las facturas por estado
+            val filteredFacturas = facturaDao.filterFacturasByEstados(estadosValidos)
 
             withContext(Dispatchers.Main) {
-                if (filteredFacturas.isNotEmpty()) {
-                    facturaAdapter.updateData(filteredFacturas)
-                    displayNoFacturasMessage(false) // Ocultar mensaje de "No hay facturas"
-                } else {
-                    facturaAdapter.updateData(emptyList())
-                    displayNoFacturasMessage(true) // Mostrar mensaje de "No hay facturas"
-                }
+                // Llenar `filteredFacturasContainer` con las facturas filtradas
+                filteredFacturasContainer.clear()
+                filteredFacturasContainer.addAll(filteredFacturas)
+
+                // Actualizar el RecyclerView con las facturas filtradas
+                facturaAdapter.updateData(filteredFacturasContainer)
+                displayNoFacturasMessage(filteredFacturasContainer.isEmpty())
             }
         }
-
     }
 
     // Función para mostrar/ocultar el mensaje de "No hay facturas"
     private fun displayNoFacturasMessage(isVisible: Boolean) {
         binding.tvNoFacturas.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.rvFacturas.visibility = if (isVisible) View.GONE else View.VISIBLE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Eliminar los filtros cuando la aplicación se cierra
+        sharedPreferences.edit().clear().apply()
     }
 
     override fun onBackPressed() {
@@ -134,6 +159,8 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
+
 
 
 

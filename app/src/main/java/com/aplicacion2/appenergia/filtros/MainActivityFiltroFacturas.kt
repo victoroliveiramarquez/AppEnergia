@@ -2,6 +2,7 @@ package com.aplicacion2.appenergia.filtros
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,14 +17,16 @@ import java.util.Locale
 class MainActivityFiltroFactura : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainFiltroFacturasBinding
+    private lateinit var sharedPreferences: SharedPreferences
     private var minDate: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializar ViewBinding
+        // Inicializar ViewBinding y SharedPreferences
         binding = ActivityMainFiltroFacturasBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        sharedPreferences = getSharedPreferences("filtros_facturas", MODE_PRIVATE)
 
         // Obtener la fecha mínima desde las facturas (puede provenir de la base de datos)
         minDate = getMinFechaFactura()
@@ -33,40 +36,38 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
         // Configurar los botones y los CheckBox
         setupButtons()
+
+        // Cargar los filtros almacenados y aplicarlos a la UI
+        loadSavedFilters()
     }
 
     private fun initializeSeekBar() {
-        // Configurar el formato para mostrar decimales con coma
+        // Configurar el formato para mostrar números enteros
         val decimalFormatSymbols = DecimalFormatSymbols().apply {
-            decimalSeparator = ','
+            decimalSeparator = ',' // Separador decimal
             groupingSeparator = '.' // Separador de miles, opcional
         }
-        val decimalFormat = DecimalFormat("#,##0.00", decimalFormatSymbols)
+        val decimalFormat = DecimalFormat("#,##0", decimalFormatSymbols)
 
-        // Establecer el valor inicial del SeekBar a 1 (equivalente a 0,01)
-        binding.seekBar.max = 10000 // Máximo valor ajustable a 100,00
-        binding.seekBar.progress = 100 // Valor inicial ajustado a 1,00
+        // Establecer el valor inicial del SeekBar
+        binding.seekBar.max = 300 // Máximo valor ajustable a 300
+        binding.seekBar.progress = 1 // Valor inicial ajustado a 1
 
         // Mostrar el valor inicial del SeekBar en el TextView
-        binding.textView5.text = "${decimalFormat.format(1.0)} €"
+        binding.textView5.text = "${decimalFormat.format(binding.seekBar.progress)} €"
 
         // Configurar el listener para el SeekBar
-        binding.seekBar.setOnSeekBarChangeListener(object :
-            android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: android.widget.SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                // Convertir el progreso a valor decimal (equivalente a dividir por 100)
-                val decimalValue = progress / 100.0
-                binding.textView5.text = "${decimalFormat.format(decimalValue)} €"
+        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+                // Mostrar el valor actual del SeekBar como número entero
+                binding.textView5.text = "${decimalFormat.format(progress)} €"
             }
 
             override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {}
         })
     }
+
 
     private fun setupButtons() {
         // Configurar botón Aplicar
@@ -127,33 +128,35 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
     // Función para obtener la fecha mínima de las facturas
     private fun getMinFechaFactura(): Long {
-        // Obtener la fecha mínima de las facturas
-        val minFecha = "07/08/2018"
+        val minFecha = "07/08/2018" // Puedes cambiar esta fecha por la que necesites
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return dateFormat.parse(minFecha)?.time ?: 0
     }
 
     private fun applyFilters() {
-        val estadoSeleccionado = when {
-            binding.chkPagadas.isChecked -> "Pagada"
-            binding.chkPendientesPago.isChecked -> "Pendiente de pago"
-            else -> null
-        }
+        val estadosSeleccionados = mutableListOf<String>()
+        if (binding.chkPagadas.isChecked) estadosSeleccionados.add("Pagada")
+        if (binding.chkPendientesPago.isChecked) estadosSeleccionados.add("Pendiente de pago")
 
-        if (estadoSeleccionado != null) {
-            // Crear un Intent para pasar el filtro de estado a MainActivityFactura
+        // Si no hay ningún estado seleccionado o los estados seleccionados no incluyen "Pagada" o "Pendiente de pago", mostrar un mensaje
+        if (estadosSeleccionados.isEmpty()) {
+            Toast.makeText(this, "No hay facturas disponibles para el estado seleccionado", Toast.LENGTH_SHORT).show()
+        } else {
+            // Guardar los estados seleccionados en SharedPreferences
+            sharedPreferences.edit().putStringSet("estados", estadosSeleccionados.toSet()).apply()
+
+            // Crear un Intent para pasar los filtros a MainActivityFactura
             val intent = Intent(this, MainActivityFactura::class.java)
-            intent.putExtra("estado", estadoSeleccionado)
+            intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
             startActivity(intent)
             finish() // Finalizar la Activity actual para destruirla
-        } else {
-            Toast.makeText(this, "No hay facturas disponibles para el estado seleccionado", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun clearFilters() {
+        // Restablecer todos los filtros a sus valores predeterminados
         binding.seekBar.progress = 100
-        binding.textView5.text = "1,00 €"
+        binding.textView5.text = "100 €"
 
         binding.chkPagadas.isChecked = false
         binding.chkAnuladas.isChecked = false
@@ -163,18 +166,27 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
         binding.button2.text = "día/mes/año"
         binding.button4.text = "días/mes/año"
+
+        // Eliminar los filtros de SharedPreferences
+        sharedPreferences.edit().clear().apply()
     }
-    private fun saveFilters(estado: String?) {
-        val sharedPref = getSharedPreferences("FacturaFilters", MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putString("estado", estado)
-            apply()
-        }
+
+    private fun loadSavedFilters() {
+        // Cargar los filtros guardados en SharedPreferences y aplicarlos a la UI
+        val savedEstados = sharedPreferences.getStringSet("estados", emptySet()) ?: emptySet()
+
+        // Aplicar los estados guardados a los CheckBox
+        binding.chkPagadas.isChecked = savedEstados.contains("Pagada")
+        binding.chkPendientesPago.isChecked = savedEstados.contains("Pendiente de pago")
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish()
+        finish() // Destruir la Activity al presionar el botón "Atrás"
     }
 }
+
+
+
+
 

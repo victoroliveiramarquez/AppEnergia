@@ -9,10 +9,9 @@ interface FacturaDao {
 
     @Query("""
     SELECT * FROM facturas 
-    WHERE 
-        (:estado IS NULL OR descEstado = :estado)
-    """)
-    suspend fun filterFacturasByEstado(estado: String?): List<Factura>
+    WHERE descEstado IN (:estados)
+""")
+    suspend fun filterFacturasByEstados(estados: List<String>): List<Factura>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
