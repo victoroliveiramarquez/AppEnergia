@@ -36,7 +36,7 @@ class MainActivityFactura : AppCompatActivity() {
         facturaDao = db.facturaDao()
 
         // Configurar RecyclerView
-        facturaAdapter = FacturaAdapter(emptyList(), this) // Pasar el contexto actual
+        facturaAdapter = FacturaAdapter(emptyList(), this)
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
 
@@ -44,27 +44,24 @@ class MainActivityFactura : AppCompatActivity() {
         binding.ibAtras.setOnClickListener {
             val intent = Intent(this, MainActivitySmartSolar::class.java)
             startActivity(intent)
-            finish() // Finalizar la Activity actual para destruirla
+            finish()
         }
 
         // Configurar el botón "Filtros" para que navegue a la Activity MainActivityFiltroFactura
         binding.imageView.setOnClickListener {
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
-            finish() // Finalizar la Activity actual para destruirla
+            finish()
         }
 
         // Cargar y mostrar las facturas desde Room y la API
         loadFacturasFromDatabase()
 
         // Verificar si hay filtros en el Intent
-        val importe = intent.getDoubleExtra("importe", -1.0)
         val estado = intent.getStringExtra("estado")
-        val fechaDesde = intent.getStringExtra("fechaDesde")
-        val fechaHasta = intent.getStringExtra("fechaHasta")
 
-        if (importe != -1.0 || !estado.isNullOrEmpty() || !fechaDesde.isNullOrEmpty() || !fechaHasta.isNullOrEmpty()) {
-            applyFilters(importe, estado, fechaDesde, fechaHasta)
+        if (!estado.isNullOrEmpty()) {
+            applyFilters(estado)
         } else {
             loadFacturasFromApi() // Si no hay filtros, cargar desde la API
         }
@@ -100,22 +97,27 @@ class MainActivityFactura : AppCompatActivity() {
         }
     }
 
-    // Función para aplicar filtros exactos y mostrar solo las facturas filtradas
-    private fun applyFilters(importe: Double, estado: String?, fechaDesde: String?, fechaHasta: String?) {
+    private fun applyFilters(estado: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val filteredFacturas = facturaDao.filterFacturasExact(
-                estado = estado ?: "%",
-                fechaDesde = fechaDesde ?: "01/01/2000",
-                fechaHasta = fechaHasta ?: "31/12/2999",
-                minImporte = if (importe != -1.0) importe else 0.0,
-                maxImporte = if (importe != -1.0) importe else Double.MAX_VALUE
-            )
+            // Filtrar solo si el estado es "Pagada" o "Pendiente de pago".
+            val filteredFacturas = if (estado == "Pagada" || estado == "Pendiente de pago") {
+                facturaAdapter.updateData(emptyList())
+                facturaDao.filterFacturasByEstado(estado)
+            } else {
+                emptyList() // Si no es "Pagada" o "Pendiente de pago", no hay facturas disponibles.
+            }
 
             withContext(Dispatchers.Main) {
-                facturaAdapter.updateData(filteredFacturas)
-                displayNoFacturasMessage(filteredFacturas.isEmpty()) // Mostrar mensaje si no hay facturas
+                if (filteredFacturas.isNotEmpty()) {
+                    facturaAdapter.updateData(filteredFacturas)
+                    displayNoFacturasMessage(false) // Ocultar mensaje de "No hay facturas"
+                } else {
+                    facturaAdapter.updateData(emptyList())
+                    displayNoFacturasMessage(true) // Mostrar mensaje de "No hay facturas"
+                }
             }
         }
+
     }
 
     // Función para mostrar/ocultar el mensaje de "No hay facturas"
@@ -129,9 +131,10 @@ class MainActivityFactura : AppCompatActivity() {
         val intent = Intent(this, MainActivityPortada::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        finish() // Destruir la Activity al presionar el botón "Atrás"
+        finish()
     }
 }
+
 
 
 

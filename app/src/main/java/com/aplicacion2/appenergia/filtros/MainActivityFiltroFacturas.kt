@@ -134,23 +134,21 @@ class MainActivityFiltroFactura : AppCompatActivity() {
     }
 
     private fun applyFilters() {
-        val importeSeleccionado = binding.seekBar.progress / 100.0 // Convertir a valor decimal
         val estadoSeleccionado = when {
             binding.chkPagadas.isChecked -> "Pagada"
-            binding.chkPendientesPago.isChecked -> "Pendientes de pago"
-            else -> ""
+            binding.chkPendientesPago.isChecked -> "Pendiente de pago"
+            else -> null
         }
-        val fechaDesde = binding.button2.text.toString()
-        val fechaHasta = binding.button4.text.toString()
 
-        // Crear un Intent para pasar los filtros a MainActivityFactura
-        val intent = Intent(this, MainActivityFactura::class.java)
-        intent.putExtra("importe", importeSeleccionado)
-        intent.putExtra("estado", estadoSeleccionado)
-        intent.putExtra("fechaDesde", fechaDesde)
-        intent.putExtra("fechaHasta", fechaHasta)
-        startActivity(intent)
-        finish() // Finalizar la Activity actual para destruirla
+        if (estadoSeleccionado != null) {
+            // Crear un Intent para pasar el filtro de estado a MainActivityFactura
+            val intent = Intent(this, MainActivityFactura::class.java)
+            intent.putExtra("estado", estadoSeleccionado)
+            startActivity(intent)
+            finish() // Finalizar la Activity actual para destruirla
+        } else {
+            Toast.makeText(this, "No hay facturas disponibles para el estado seleccionado", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun clearFilters() {
@@ -166,10 +164,17 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         binding.button2.text = "día/mes/año"
         binding.button4.text = "días/mes/año"
     }
+    private fun saveFilters(estado: String?) {
+        val sharedPref = getSharedPreferences("FacturaFilters", MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("estado", estado)
+            apply()
+        }
+    }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish() // Destruir la Activity al presionar el botón "Atrás"
+        finish()
     }
 }
 

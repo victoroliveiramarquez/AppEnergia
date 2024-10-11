@@ -10,18 +10,9 @@ interface FacturaDao {
     @Query("""
     SELECT * FROM facturas 
     WHERE 
-        (:estado IS NULL OR descEstado = :estado) AND
-        (:minImporte IS NULL OR :maxImporte IS NULL OR importeOrdenacion BETWEEN :minImporte AND :maxImporte) AND
-        (:fechaDesde IS NULL OR fecha >= :fechaDesde) AND
-        (:fechaHasta IS NULL OR fecha <= :fechaHasta)
+        (:estado IS NULL OR descEstado = :estado)
     """)
-    suspend fun filterFacturasExact(
-        estado: String,
-        fechaDesde: String,
-        fechaHasta: String,
-        minImporte: Double,
-        maxImporte: Double
-    ): List<Factura>
+    suspend fun filterFacturasByEstado(estado: String?): List<Factura>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
