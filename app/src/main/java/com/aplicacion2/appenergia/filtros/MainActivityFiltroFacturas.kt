@@ -46,8 +46,13 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         binding.seekBar.progress = 1
         binding.textView5.text = "${decimalFormat.format(binding.seekBar.progress)} €"
 
-        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+        binding.seekBar.setOnSeekBarChangeListener(object :
+            android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: android.widget.SeekBar?,
+                progress: Int,
+                fromUser: Boolean
+            ) {
                 binding.textView5.text = "${decimalFormat.format(progress)} €"
             }
 
@@ -93,7 +98,8 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
+                val formattedDate =
+                    String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
                 onDateSelected(formattedDate)
             },
             year,
@@ -130,14 +136,21 @@ class MainActivityFiltroFactura : AppCompatActivity() {
     // Aplicar filtros al hacer clic en "Aplicar"
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
-        val valorMaximo = obtenerValorSeekBar()
-
-        if (estadosSeleccionados.isEmpty()) {
-            Toast.makeText(this, "No hay facturas disponibles para el estado seleccionado", Toast.LENGTH_SHORT).show()
+        val valorMaximo: Double = if (binding.seekBar.progress == 1) {
+            Double.MAX_VALUE // Esto implica que el usuario no tocó el SeekBar
         } else {
+            binding.seekBar.progress.toDouble() // Tomar el valor si el usuario lo cambió
+        }
+
+        // Verifica si hay estados seleccionados o el SeekBar fue modificado
+        if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE) {
+            Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            // Crear un Intent para pasar los filtros a MainActivityFactura
             val intent = Intent(this, MainActivityFactura::class.java)
             intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
-            intent.putExtra("maxValueSlider", valorMaximo.toDouble()) // Pasar el valor del SeekBar
+            intent.putExtra("valorMaximo", valorMaximo) // Pasar el valor del SeekBar
             startActivity(intent)
             finish()
         }

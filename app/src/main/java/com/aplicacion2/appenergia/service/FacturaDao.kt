@@ -10,6 +10,18 @@ interface FacturaDao {
 
     @Query("""
     SELECT * FROM facturas 
+    WHERE importeOrdenacion <= :valorMaximo
+    """)
+    suspend fun filterFacturasByValorMaximo(valorMaximo: Int): List<Factura>
+
+    @Query("""
+    SELECT * FROM facturas 
+    WHERE descEstado IN (:estados)
+    """)
+    suspend fun filterFacturasByEstados(estados: List<String>): List<Factura>
+
+    @Query("""
+    SELECT * FROM facturas 
     WHERE descEstado IN (:estados)
     AND importeOrdenacion <= :valorMaximo
     """)
@@ -24,6 +36,7 @@ interface FacturaDao {
     @Query("DELETE FROM facturas")
     suspend fun deleteAll()
 }
+
 
 
 

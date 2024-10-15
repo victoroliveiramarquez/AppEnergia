@@ -1,9 +1,7 @@
 package com.aplicacion2.appenergia.filtros
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +12,6 @@ import com.aplicacion2.appenergia.service.Factura
 import com.aplicacion2.appenergia.service.FacturaAdapter
 import com.aplicacion2.appenergia.service.FacturaDao
 import com.aplicacion2.appenergia.service.FacturaDatabase
-import com.aplicacion2.appenergia.service.RetrofitClient
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +24,7 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaDao: FacturaDao
 
-    // Contenedor intermediario para almacenar las facturas filtradas
+    // Contenedor para almacenar las facturas filtradas
     private var filteredFacturasContainer: MutableList<Factura> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,20 +57,18 @@ class MainActivityFactura : AppCompatActivity() {
             finish()
         }
 
-
         // Recuperar los estados y el valor del SeekBar del Intent
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
-        val valorMaximo = intent.getDoubleExtra("maxValueSlider", Double.MAX_VALUE)
+        val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE)
 
-        // Aplicar filtros a las facturas en función de los estados seleccionados y el valor del SeekBar
-        if (estados.isNotEmpty()) {
+        // Aplicar filtros según los estados y el valor del SeekBar
+        if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE) {
             applyFilters(estados, valorMaximo)
         } else {
             // Si no hay filtros, cargar las facturas desde la base de datos
             loadFacturasFromDatabase()
         }
     }
-
 
     // Función para cargar las facturas desde la base de datos Room
     private fun loadFacturasFromDatabase() {
@@ -96,19 +91,19 @@ class MainActivityFactura : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val estadosValidos = estados.filter { it == "Pagada" || it == "Pendiente de pago" }
 
-            if (estadosValidos.isEmpty()) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los filtros seleccionados", Toast.LENGTH_SHORT).show()
-                    displayNoFacturasMessage(true)
+            val filteredFacturas = when {
+                estadosValidos.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
+                    facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt()) // Filtrar por estados y valor del SeekBar
                 }
-                return@launch
+                estadosValidos.isNotEmpty() -> {
+                    facturaDao.filterFacturasByEstados(estadosValidos) // Filtrar solo por estados
+                }
+                else -> {
+                    facturaDao.filterFacturasByValorMaximo(valorMaximo.toInt()) // Filtrar solo por valor del SeekBar
+                }
             }
 
-            // Filtrar las facturas por estado y valor del SeekBar (importe máximo)
-            val filteredFacturas = facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt())
-
             withContext(Dispatchers.Main) {
-                // Llenar `filteredFacturasContainer` con las facturas filtradas
                 filteredFacturasContainer.clear()
                 filteredFacturasContainer.addAll(filteredFacturas)
 
