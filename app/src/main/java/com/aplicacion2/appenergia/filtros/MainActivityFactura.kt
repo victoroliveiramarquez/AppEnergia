@@ -2,7 +2,6 @@ package com.aplicacion2.appenergia.filtros
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,16 +26,12 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var binding: ActivityMainFacturaBinding
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaDao: FacturaDao
-    private lateinit var sharedPreferences: SharedPreferences
 
-    // Crear la lista vacía como contenedor intermediario para almacenar las facturas filtradas
+    // Contenedor intermediario para almacenar las facturas filtradas
     private var filteredFacturasContainer: MutableList<Factura> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Inicializar SharedPreferences
-        sharedPreferences = getSharedPreferences("filtros_facturas", Context.MODE_PRIVATE)
 
         // Inicializar ViewBinding
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
@@ -51,14 +46,14 @@ class MainActivityFactura : AppCompatActivity() {
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
 
-        // Configurar el botón "Consumo" para que navegue a la Activity SmartSolar
+        // Botón "Consumo" para navegar a la Activity SmartSolar
         binding.ibAtras.setOnClickListener {
             val intent = Intent(this, MainActivitySmartSolar::class.java)
             startActivity(intent)
             finish()
         }
 
-        // Configurar el botón "Filtros" para que navegue a la Activity MainActivityFiltroFactura
+        // Botón "Filtros" para navegar a la Activity MainActivityFiltroFactura
         binding.imageView.setOnClickListener {
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
@@ -66,66 +61,51 @@ class MainActivityFactura : AppCompatActivity() {
         }
 
 
-        // Recuperar los estados del Intent
+        // Recuperar los estados y el valor del SeekBar del Intent
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
+        val valorMaximo = intent.getDoubleExtra("maxValueSlider", Double.MAX_VALUE)
 
-        // Aplicar filtros a las facturas en función de los estados seleccionados
+        // Aplicar filtros a las facturas en función de los estados seleccionados y el valor del SeekBar
         if (estados.isNotEmpty()) {
-            applyFilters(estados)
-        } else { // Cargar y mostrar las facturas desde Room y la API
+            applyFilters(estados, valorMaximo)
+        } else {
+            // Si no hay filtros, cargar las facturas desde la base de datos
             loadFacturasFromDatabase()
         }
     }
 
-    // Función para cargar las facturas desde la API y almacenarlas en Room
-    private fun loadFacturasFromApi() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val facturasService = RetrofitClient.facturaService
-                val response = facturasService.getFacturas() // Llamada a la API
-
-                // Insertar los datos en Room
-                facturaDao.deleteAll()
-                facturaDao.insertAll(response.facturas)
-
-                // Actualizar la UI con los datos de la base de datos
-                loadFacturasFromDatabase()
-            } catch (e: Exception) {
-                Log.e("MainActivityFactura", "Error al cargar las facturas desde la API: ${e.message}")
-            }
-        }
-    }
 
     // Función para cargar las facturas desde la base de datos Room
     private fun loadFacturasFromDatabase() {
         lifecycleScope.launch(Dispatchers.IO) {
             val facturasFromDb = facturaDao.getAllFacturas()
             withContext(Dispatchers.Main) {
-                // Almacenar las facturas obtenidas en el contenedor intermedio
+                // Almacenar las facturas obtenidas
                 filteredFacturasContainer.clear()
                 filteredFacturasContainer.addAll(facturasFromDb)
 
-                // Actualizar el RecyclerView con las facturas del contenedor intermedio
+                // Actualizar el RecyclerView
                 facturaAdapter.updateData(filteredFacturasContainer)
                 displayNoFacturasMessage(filteredFacturasContainer.isEmpty())
             }
         }
     }
 
-    private fun applyFilters(estados: List<String>?) {
+    // Función para aplicar filtros
+    private fun applyFilters(estados: List<String>, valorMaximo: Double) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val estadosValidos = estados?.filter { it == "Pagada" || it == "Pendiente de pago" } ?: emptyList()
+            val estadosValidos = estados.filter { it == "Pagada" || it == "Pendiente de pago" }
 
             if (estadosValidos.isEmpty()) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los estados seleccionados", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los filtros seleccionados", Toast.LENGTH_SHORT).show()
                     displayNoFacturasMessage(true)
                 }
                 return@launch
             }
 
-            // Filtrar las facturas por estado
-            val filteredFacturas = facturaDao.filterFacturas(estadosValidos)
+            // Filtrar las facturas por estado y valor del SeekBar (importe máximo)
+            val filteredFacturas = facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt())
 
             withContext(Dispatchers.Main) {
                 // Llenar `filteredFacturasContainer` con las facturas filtradas
@@ -145,12 +125,6 @@ class MainActivityFactura : AppCompatActivity() {
         binding.rvFacturas.visibility = if (isVisible) View.GONE else View.VISIBLE
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Eliminar los filtros cuando la aplicación se cierra
-        sharedPreferences.edit().clear().apply()
-    }
-
     override fun onBackPressed() {
         super.onBackPressed()
         val intent = Intent(this, MainActivityPortada::class.java)
@@ -159,6 +133,7 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
 
 
 

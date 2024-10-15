@@ -1,4 +1,5 @@
 package com.aplicacion2.appenergia.service
+
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,8 +11,9 @@ interface FacturaDao {
     @Query("""
     SELECT * FROM facturas 
     WHERE descEstado IN (:estados)
-""")
-    suspend fun filterFacturas(estados: List<String>): List<Factura>
+    AND importeOrdenacion <= :valorMaximo
+    """)
+    suspend fun filterFacturasByEstadoYValor(estados: List<String>, valorMaximo: Int): List<Factura>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
@@ -22,6 +24,7 @@ interface FacturaDao {
     @Query("DELETE FROM facturas")
     suspend fun deleteAll()
 }
+
 
 
 
