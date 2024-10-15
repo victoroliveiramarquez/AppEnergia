@@ -175,5 +175,3 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
 
 
-
-

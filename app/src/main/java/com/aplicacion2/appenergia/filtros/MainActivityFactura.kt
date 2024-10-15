@@ -85,21 +85,34 @@ class MainActivityFactura : AppCompatActivity() {
     // Función para aplicar filtros por estados y valor del SeekBar
     private fun applyFilters(estados: List<String>, valorMaximo: Double) {
         lifecycleScope.launch(Dispatchers.IO) {
+            // Filtrar solo los estados permitidos: "Pagada" y "Pendiente de pago"
             val estadosValidos = estados.filter { it == "Pagada" || it == "Pendiente de pago" }
 
-            // Si no hay estados válidos, mostrar mensaje "No hay facturas disponibles"
-            if (estadosValidos.isEmpty()) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los filtros seleccionados", Toast.LENGTH_SHORT).show()
-                    displayNoFacturasMessage(true)
+            val filteredFacturas = when {
+                // Caso 1: Si no hay estados válidos seleccionados, mostrar mensaje
+                estados.isNotEmpty() && estadosValidos.isEmpty() -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los estados seleccionados", Toast.LENGTH_SHORT).show()
+                        displayNoFacturasMessage(true)
+                    }
+                    return@launch
                 }
-                return@launch
-            }
-
-            val filteredFacturas = if (valorMaximo != Double.MAX_VALUE) {
-                facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt()) // Filtrar por estados y valor
-            } else {
-                facturaDao.filterFacturasByEstados(estadosValidos) // Filtrar solo por estados
+                // Caso 2: Filtrar por estado y valor del SeekBar
+                estadosValidos.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
+                    facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt())
+                }
+                // Caso 3: Filtrar solo por estado
+                estadosValidos.isNotEmpty() -> {
+                    facturaDao.filterFacturasByEstados(estadosValidos)
+                }
+                // Caso 4: Filtrar solo por valor del SeekBar
+                valorMaximo != Double.MAX_VALUE -> {
+                    facturaDao.filterFacturasByValorMaximo(valorMaximo.toInt())
+                }
+                // Caso 5: Si no hay filtros, mostrar todas las facturas
+                else -> {
+                    facturaDao.getAllFacturas()
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -110,6 +123,8 @@ class MainActivityFactura : AppCompatActivity() {
             }
         }
     }
+
+
 
     // Función para mostrar/ocultar el mensaje de "No hay facturas"
     private fun displayNoFacturasMessage(isVisible: Boolean) {
@@ -125,6 +140,7 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
 
 
 
