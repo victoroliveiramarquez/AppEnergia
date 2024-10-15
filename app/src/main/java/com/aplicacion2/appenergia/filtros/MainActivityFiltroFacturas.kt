@@ -145,7 +145,6 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         return estadosSeleccionados
     }
 
-
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
 
