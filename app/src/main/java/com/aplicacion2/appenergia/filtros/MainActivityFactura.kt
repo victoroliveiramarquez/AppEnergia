@@ -61,11 +61,10 @@ class MainActivityFactura : AppCompatActivity() {
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
         val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE)
 
-        // Aplicar filtros según los estados y el valor del SeekBar
+        // Aplicar los filtros dependiendo de los valores recibidos
         if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE) {
             applyFilters(estados, valorMaximo)
         } else {
-            // Si no hay filtros, cargar las facturas desde la base de datos
             loadFacturasFromDatabase()
         }
     }
@@ -75,44 +74,37 @@ class MainActivityFactura : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val facturasFromDb = facturaDao.getAllFacturas()
             withContext(Dispatchers.Main) {
-                // Almacenar las facturas obtenidas
                 filteredFacturasContainer.clear()
                 filteredFacturasContainer.addAll(facturasFromDb)
-
-                // Actualizar el RecyclerView
                 facturaAdapter.updateData(filteredFacturasContainer)
                 displayNoFacturasMessage(filteredFacturasContainer.isEmpty())
             }
         }
     }
 
-    // Función para aplicar filtros
+    // Función para aplicar filtros por estados y valor del SeekBar
     private fun applyFilters(estados: List<String>, valorMaximo: Double) {
         lifecycleScope.launch(Dispatchers.IO) {
             val estadosValidos = estados.filter { it == "Pagada" || it == "Pendiente de pago" }
 
-            val filteredFacturas = when {
-                estadosValidos.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
-                    facturaDao.filterFacturasByEstadoYValor(
-                        estadosValidos,
-                        valorMaximo.toInt()
-                    ) // Filtrar por estados y valor del SeekBar
+            // Si no hay estados válidos, mostrar mensaje "No hay facturas disponibles"
+            if (estadosValidos.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los filtros seleccionados", Toast.LENGTH_SHORT).show()
+                    displayNoFacturasMessage(true)
                 }
+                return@launch
+            }
 
-                estadosValidos.isNotEmpty() -> {
-                    facturaDao.filterFacturasByEstados(estadosValidos) // Filtrar solo por estados
-                }
-
-                else -> {
-                    facturaDao.filterFacturasByValorMaximo(valorMaximo.toInt()) // Filtrar solo por valor del SeekBar
-                }
+            val filteredFacturas = if (valorMaximo != Double.MAX_VALUE) {
+                facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt()) // Filtrar por estados y valor
+            } else {
+                facturaDao.filterFacturasByEstados(estadosValidos) // Filtrar solo por estados
             }
 
             withContext(Dispatchers.Main) {
                 filteredFacturasContainer.clear()
                 filteredFacturasContainer.addAll(filteredFacturas)
-
-                // Actualizar el RecyclerView con las facturas filtradas
                 facturaAdapter.updateData(filteredFacturasContainer)
                 displayNoFacturasMessage(filteredFacturasContainer.isEmpty())
             }
@@ -133,8 +125,6 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
-
-
 
 
 

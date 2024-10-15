@@ -27,6 +27,9 @@ interface FacturaDao {
     """)
     suspend fun filterFacturasByEstadoYValor(estados: List<String>, valorMaximo: Int): List<Factura>
 
+
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
 
@@ -35,7 +38,9 @@ interface FacturaDao {
 
     @Query("DELETE FROM facturas")
     suspend fun deleteAll()
+
 }
+
 
 
 
