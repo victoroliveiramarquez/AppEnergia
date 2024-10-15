@@ -65,15 +65,15 @@ class MainActivityFactura : AppCompatActivity() {
             finish()
         }
 
-        // Cargar y mostrar las facturas desde Room y la API
-        loadFacturasFromDatabase()
 
-        // Obtener los estados de SharedPreferences
-        val estados = sharedPreferences.getStringSet("estados", emptySet())?.toList()
-        if (!estados.isNullOrEmpty()) {
-            applyFilters(estados)  // Pasar la lista de estados
-        } else {
-            loadFacturasFromApi() // Si no hay filtros, cargar desde la API
+        // Recuperar los estados del Intent
+        val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
+
+        // Aplicar filtros a las facturas en función de los estados seleccionados
+        if (estados.isNotEmpty()) {
+            applyFilters(estados)
+        } else { // Cargar y mostrar las facturas desde Room y la API
+            loadFacturasFromDatabase()
         }
     }
 
@@ -125,7 +125,7 @@ class MainActivityFactura : AppCompatActivity() {
             }
 
             // Filtrar las facturas por estado
-            val filteredFacturas = facturaDao.filterFacturasByEstados(estadosValidos)
+            val filteredFacturas = facturaDao.filterFacturas(estadosValidos)
 
             withContext(Dispatchers.Main) {
                 // Llenar `filteredFacturasContainer` con las facturas filtradas
@@ -159,6 +159,12 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
+
+
+
+
+
 
 
 

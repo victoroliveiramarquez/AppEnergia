@@ -4,3 +4,4 @@ data class FacturaResponse(
     val numFacturas: Int,
     val facturas: List<Factura>
 )
+

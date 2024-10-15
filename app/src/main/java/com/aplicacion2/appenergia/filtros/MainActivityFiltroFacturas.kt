@@ -68,7 +68,6 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         })
     }
 
-
     private fun setupButtons() {
         // Configurar botón Aplicar
         binding.button.setOnClickListener {
@@ -133,29 +132,37 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         return dateFormat.parse(minFecha)?.time ?: 0
     }
 
-    private fun applyFilters() {
+
+    private fun obtenerEstadosSeleccionados(): List<String> {
         val estadosSeleccionados = mutableListOf<String>()
+
         if (binding.chkPagadas.isChecked) estadosSeleccionados.add("Pagada")
         if (binding.chkPendientesPago.isChecked) estadosSeleccionados.add("Pendiente de pago")
+        if (binding.chkAnuladas.isChecked) estadosSeleccionados.add("Anulada")
+        if (binding.chkCuotaFija.isChecked) estadosSeleccionados.add("Cuota fija")
+        if (binding.chkPlanPago.isChecked) estadosSeleccionados.add("Plan de pago")
 
-        // Si no hay ningún estado seleccionado o los estados seleccionados no incluyen "Pagada" o "Pendiente de pago", mostrar un mensaje
+        return estadosSeleccionados
+    }
+
+
+    private fun applyFilters() {
+        val estadosSeleccionados = obtenerEstadosSeleccionados()
+
         if (estadosSeleccionados.isEmpty()) {
             Toast.makeText(this, "No hay facturas disponibles para el estado seleccionado", Toast.LENGTH_SHORT).show()
         } else {
-            // Guardar los estados seleccionados en SharedPreferences
-            sharedPreferences.edit().putStringSet("estados", estadosSeleccionados.toSet()).apply()
-
-            // Crear un Intent para pasar los filtros a MainActivityFactura
+            // Pasar los filtros a la MainActivityFactura usando un Intent
             val intent = Intent(this, MainActivityFactura::class.java)
             intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
             startActivity(intent)
-            finish() // Finalizar la Activity actual para destruirla
+            finish()
         }
     }
 
     private fun clearFilters() {
         // Restablecer todos los filtros a sus valores predeterminados
-        binding.seekBar.progress = 100
+        binding.seekBar.progress = 1
         binding.textView5.text = "100 €"
 
         binding.chkPagadas.isChecked = false

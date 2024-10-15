@@ -11,7 +11,7 @@ interface FacturaDao {
     SELECT * FROM facturas 
     WHERE descEstado IN (:estados)
 """)
-    suspend fun filterFacturasByEstados(estados: List<String>): List<Factura>
+    suspend fun filterFacturas(estados: List<String>): List<Factura>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(facturas: List<Factura>)
@@ -22,3 +22,6 @@ interface FacturaDao {
     @Query("DELETE FROM facturas")
     suspend fun deleteAll()
 }
+
+
+
