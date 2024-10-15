@@ -93,11 +93,16 @@ class MainActivityFactura : AppCompatActivity() {
 
             val filteredFacturas = when {
                 estadosValidos.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
-                    facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt()) // Filtrar por estados y valor del SeekBar
+                    facturaDao.filterFacturasByEstadoYValor(
+                        estadosValidos,
+                        valorMaximo.toInt()
+                    ) // Filtrar por estados y valor del SeekBar
                 }
+
                 estadosValidos.isNotEmpty() -> {
                     facturaDao.filterFacturasByEstados(estadosValidos) // Filtrar solo por estados
                 }
+
                 else -> {
                     facturaDao.filterFacturasByValorMaximo(valorMaximo.toInt()) // Filtrar solo por valor del SeekBar
                 }

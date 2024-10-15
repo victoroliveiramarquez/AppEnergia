@@ -88,7 +88,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
 
     // Función para mostrar el AlertDialog
     private fun showInfoPopup() {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
 
         val dialogBuilder = AlertDialog.Builder(context)
             .setView(dialogView)
