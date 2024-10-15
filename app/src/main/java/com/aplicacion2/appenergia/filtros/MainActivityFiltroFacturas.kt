@@ -72,6 +72,11 @@ class MainActivityFiltroFactura : AppCompatActivity() {
             clearFilters()
             Toast.makeText(this, "Filtros eliminados", Toast.LENGTH_SHORT).show()
         }
+        binding.imClose.setOnClickListener {
+            val intent = Intent(this, MainActivityPortada::class.java) // Navegar a la actividad de portada
+            startActivity(intent)
+            finish() // Finalizar la actividad actual para eliminarla de la pila
+        }
 
         // Configurar los botones de selección de fecha
         binding.button2.setOnClickListener {
@@ -159,14 +164,12 @@ class MainActivityFiltroFactura : AppCompatActivity() {
     // Limpiar filtros
     private fun clearFilters() {
         binding.seekBar.progress = 1
-        binding.textView5.text = "100 €"
-
+        binding.textView5.text = "1 €"
         binding.chkPagadas.isChecked = false
         binding.chkAnuladas.isChecked = false
         binding.chkCuotaFija.isChecked = false
         binding.chkPendientesPago.isChecked = false
         binding.chkPlanPago.isChecked = false
-
         binding.button2.text = "día/mes/año"
         binding.button4.text = "días/mes/año"
     }
