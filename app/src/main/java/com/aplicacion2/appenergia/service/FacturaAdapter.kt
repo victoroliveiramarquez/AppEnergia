@@ -118,5 +118,3 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
 
 
 
-
-

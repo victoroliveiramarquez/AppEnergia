@@ -57,7 +57,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="14dp"
-        android:text="1 €"
+        android:text="0 €"
         android:textColor="#8C8686"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
@@ -209,7 +209,7 @@
         android:text="Con fecha de emisión"
         android:textSize="17dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDesde"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -256,7 +256,7 @@
         app:layout_constraintVertical_bias="0.4"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button2"
+        android:id="@+id/buttonDesde"
         android:layout_width="178dp"
         android:layout_height="55dp"
         android:layout_marginTop="23dp"
@@ -270,12 +270,12 @@
         app:layout_constraintVertical_bias="0.225" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button4"
+        android:id="@+id/buttonHasta"
         android:layout_width="178dp"
         android:layout_height="55dp"
         android:layout_marginEnd="4dp"
         android:backgroundTint="#D7D1D1"
-        android:text="días/mes/año"
+        android:text="día/mes/año"
         android:textColor="@color/black"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tvMaxImporte"

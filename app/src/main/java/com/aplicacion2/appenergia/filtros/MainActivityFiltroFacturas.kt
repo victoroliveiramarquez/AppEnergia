@@ -43,7 +43,7 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         val decimalFormat = DecimalFormat("#,##0", decimalFormatSymbols)
 
         binding.seekBar.max = 300
-        binding.seekBar.progress = 1
+        binding.seekBar.progress = 0
         binding.textView5.text = "${decimalFormat.format(binding.seekBar.progress)} €"
 
         binding.seekBar.setOnSeekBarChangeListener(object :
@@ -79,16 +79,16 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         }
 
         // Configurar los botones de selección de fecha
-        binding.button2.setOnClickListener {
+        binding.buttonDesde.setOnClickListener {
             showDatePickerWithMinDate { date ->
-                binding.button2.text = date
+                binding.buttonDesde.text = date
                 Toast.makeText(this, "Fecha seleccionada: $date", Toast.LENGTH_SHORT).show()
             }
         }
 
-        binding.button4.setOnClickListener {
+        binding.buttonHasta.setOnClickListener {
             showDatePickerWithMinDate { date ->
-                binding.button4.text = date
+                binding.buttonHasta.text = date
                 Toast.makeText(this, "Fecha seleccionada: $date", Toast.LENGTH_SHORT).show()
             }
         }
@@ -163,17 +163,20 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
     // Limpiar filtros
     private fun clearFilters() {
-        binding.seekBar.progress = 1
-        binding.textView5.text = "1 €"
+        binding.seekBar.progress = 0
+        binding.textView5.text = "0 €"
         binding.chkPagadas.isChecked = false
         binding.chkAnuladas.isChecked = false
         binding.chkCuotaFija.isChecked = false
         binding.chkPendientesPago.isChecked = false
         binding.chkPlanPago.isChecked = false
-        binding.button2.text = "día/mes/año"
-        binding.button4.text = "días/mes/año"
+        binding.buttonDesde.text = "día/mes/año"
+        binding.buttonHasta.text = "día/mes/año"
     }
 }
+
+
+
 
 
 

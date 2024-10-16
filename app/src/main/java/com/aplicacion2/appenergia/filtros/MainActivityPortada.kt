@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.aplicacion2.appenergia.filtros.MainActivityFactura
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainPortadaBinding
 
