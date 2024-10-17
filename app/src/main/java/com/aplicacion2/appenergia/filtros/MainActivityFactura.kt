@@ -8,10 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
-import com.aplicacion2.appenergia.service.Factura
-import com.aplicacion2.appenergia.service.FacturaAdapter
-import com.aplicacion2.appenergia.service.FacturaDao
-import com.aplicacion2.appenergia.service.FacturaDatabase
+import com.aplicacion2.appenergia.service.*
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,16 +26,14 @@ class MainActivityFactura : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Inicializar ViewBinding
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicializar la base de datos y DAO de Room
+        // Obtener la instancia de la base de datos
         val db = FacturaDatabase.getDatabase(this)
         facturaDao = db.facturaDao()
 
-        // Configurar RecyclerView
+        // Configurar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
@@ -57,18 +52,57 @@ class MainActivityFactura : AppCompatActivity() {
             finish()
         }
 
-        // Recuperar los estados y el valor del SeekBar del Intent
+        // Obtener los filtros del Intent
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
         val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE)
 
-        // Aplicar los filtros dependiendo de los valores recibidos
+        // Si hay filtros, aplicarlos
         if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE) {
             applyFilters(estados, valorMaximo)
         } else {
+            // Cargar todas las facturas desde la base de datos si no hay filtros
             loadFacturasFromDatabase()
         }
     }
 
+    // Función para cargar las facturas desde la API solo si la base de datos está vacía
+    private fun cargarFacturasSiEsNecesario() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val facturasCount = facturaDao.getCountFacturas()
+
+            if (facturasCount == 0) {
+                // Si no hay facturas en la base de datos, cargarlas desde la API
+                cargarFacturasDesdeAPI()
+            } else {
+                // Si ya hay facturas, solo cargarlas desde la base de datos local
+                loadFacturasFromDatabase()
+            }
+        }
+    }
+
+    // Función para cargar las facturas desde la API y almacenarlas en Room
+    private fun cargarFacturasDesdeAPI() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitClient.facturaService.getFacturas()
+
+                // Guardar las facturas en la base de datos local
+                facturaDao.deleteAll() // Limpiar la base de datos antes de insertar nuevas facturas
+                facturaDao.insertAll(response.facturas)
+
+                // Una vez almacenadas las facturas, cargarlas desde la base de datos local
+                withContext(Dispatchers.Main) {
+                    loadFacturasFromDatabase()
+                    Toast.makeText(this@MainActivityFactura, "Facturas cargadas desde la API", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivityFactura, "Error al cargar las facturas desde la API", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
     // Función para cargar las facturas desde la base de datos Room
     private fun loadFacturasFromDatabase() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -82,39 +116,30 @@ class MainActivityFactura : AppCompatActivity() {
         }
     }
 
-    // Función para aplicar filtros por estados y valor del SeekBar
+    // Aplicar los filtros por estados y valor del SeekBar localmente
     private fun applyFilters(estados: List<String>, valorMaximo: Double) {
         lifecycleScope.launch(Dispatchers.IO) {
-            // Filtrar solo los estados permitidos: "Pagada" y "Pendiente de pago"
-            val estadosValidos = estados.filter { it == "Pagada" || it == "Pendiente de pago" }
-
+            // Filtrar los datos de Room en función de los filtros seleccionados
             val filteredFacturas = when {
-                // Caso 1: Si no hay estados válidos seleccionados, mostrar mensaje
-                estados.isNotEmpty() && estadosValidos.isEmpty() -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@MainActivityFactura, "No hay facturas disponibles para los estados seleccionados", Toast.LENGTH_SHORT).show()
-                        displayNoFacturasMessage(true)
-                    }
-                    return@launch
+                // Caso 1: Filtrar por estado y valor máximo
+                estados.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
+                    facturaDao.filterFacturasByEstadoYValor(estados, valorMaximo.toInt())
                 }
-                // Caso 2: Filtrar por estado y valor del SeekBar
-                estadosValidos.isNotEmpty() && valorMaximo != Double.MAX_VALUE -> {
-                    facturaDao.filterFacturasByEstadoYValor(estadosValidos, valorMaximo.toInt())
+                // Caso 2: Filtrar solo por estado
+                estados.isNotEmpty() -> {
+                    facturaDao.filterFacturasByEstados(estados)
                 }
-                // Caso 3: Filtrar solo por estado
-                estadosValidos.isNotEmpty() -> {
-                    facturaDao.filterFacturasByEstados(estadosValidos)
-                }
-                // Caso 4: Filtrar solo por valor del SeekBar
+                // Caso 3: Filtrar solo por valor máximo
                 valorMaximo != Double.MAX_VALUE -> {
                     facturaDao.filterFacturasByValorMaximo(valorMaximo.toInt())
                 }
-                // Caso 5: Si no hay filtros, mostrar todas las facturas
+                // Caso 4: Si no hay filtros, mostrar todas las facturas
                 else -> {
                     facturaDao.getAllFacturas()
                 }
             }
 
+            // Actualizar la UI con las facturas filtradas
             withContext(Dispatchers.Main) {
                 filteredFacturasContainer.clear()
                 filteredFacturasContainer.addAll(filteredFacturas)
@@ -123,8 +148,6 @@ class MainActivityFactura : AppCompatActivity() {
             }
         }
     }
-
-
 
     // Función para mostrar/ocultar el mensaje de "No hay facturas"
     private fun displayNoFacturasMessage(isVisible: Boolean) {

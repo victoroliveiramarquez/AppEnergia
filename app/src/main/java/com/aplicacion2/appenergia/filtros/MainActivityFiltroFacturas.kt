@@ -138,19 +138,17 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         return binding.seekBar.progress
     }
 
-    // Aplicar filtros al hacer clic en "Aplicar"
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
-        val valorMaximo: Double = if (binding.seekBar.progress == 1) {
-            Double.MAX_VALUE // Esto implica que el usuario no tocó el SeekBar
+        val valorMaximo = if (binding.seekBar.progress == 0) {
+            Double.MAX_VALUE
         } else {
-            binding.seekBar.progress.toDouble() // Tomar el valor si el usuario lo cambió
+            binding.seekBar.progress.toDouble()
         }
 
-        // Verifica si hay estados seleccionados o el SeekBar fue modificado
+        // Verifica si hay estados seleccionados o el valor del SeekBar ha sido modificado
         if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE) {
-            Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT).show()
         } else {
             // Crear un Intent para pasar los filtros a MainActivityFactura
             val intent = Intent(this, MainActivityFactura::class.java)
@@ -160,6 +158,7 @@ class MainActivityFiltroFactura : AppCompatActivity() {
             finish()
         }
     }
+
 
     // Limpiar filtros
     private fun clearFilters() {

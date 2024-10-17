@@ -8,29 +8,16 @@ import androidx.room.Query
 @Dao
 interface FacturaDao {
 
-    @Query("""
-    SELECT * FROM facturas 
-    WHERE importeOrdenacion <= :valorMaximo
-    """)
+    @Query("SELECT * FROM facturas WHERE importeOrdenacion <= :valorMaximo")
     suspend fun filterFacturasByValorMaximo(valorMaximo: Int): List<Factura>
 
-    @Query("""
-    SELECT * FROM facturas 
-    WHERE descEstado IN (:estados)
-    """)
+    @Query("SELECT * FROM facturas WHERE descEstado IN (:estados)")
     suspend fun filterFacturasByEstados(estados: List<String>): List<Factura>
 
-    @Query("""
-    SELECT * FROM facturas 
-    WHERE descEstado IN (:estados)
-    AND importeOrdenacion <= :valorMaximo
-    """)
+    @Query("SELECT * FROM facturas WHERE descEstado IN (:estados) AND importeOrdenacion <= :valorMaximo")
     suspend fun filterFacturasByEstadoYValor(estados: List<String>, valorMaximo: Int): List<Factura>
 
-
-
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(facturas: List<Factura>)
 
     @Query("SELECT * FROM facturas")
@@ -39,7 +26,11 @@ interface FacturaDao {
     @Query("DELETE FROM facturas")
     suspend fun deleteAll()
 
+    @Query("SELECT COUNT(*) FROM facturas")
+    suspend fun getCountFacturas(): Int
 }
+
+
 
 
 
