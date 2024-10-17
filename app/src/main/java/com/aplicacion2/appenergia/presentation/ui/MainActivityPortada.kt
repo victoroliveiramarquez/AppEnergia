@@ -1,4 +1,4 @@
-package com.aplicacion2.appenergia.filtros
+package com.aplicacion2.appenergia.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle

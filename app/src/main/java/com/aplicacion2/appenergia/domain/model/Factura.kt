@@ -1,4 +1,4 @@
-package com.aplicacion2.appenergia.service
+package com.aplicacion2.appenergia.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

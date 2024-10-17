@@ -1,4 +1,4 @@
-package com.aplicacion2.appenergia.service
+package com.aplicacion2.appenergia.data.api
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import com.aplicacion2.appenergia.domain.model.Factura
 import com.example.facturas_tfc.R
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

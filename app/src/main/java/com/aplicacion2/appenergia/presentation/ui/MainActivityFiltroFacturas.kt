@@ -1,4 +1,4 @@
-package com.aplicacion2.appenergia.filtros
+package com.aplicacion2.appenergia.presentation.ui
 
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -146,14 +146,32 @@ class MainActivityFiltroFactura : AppCompatActivity() {
             binding.seekBar.progress.toDouble()
         }
 
-        // Verifica si hay estados seleccionados o el valor del SeekBar ha sido modificado
-        if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE) {
+        // Convertir las fechas de los botones a Long
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // Fechas seleccionadas en los botones
+        val fechaDesde = if (binding.buttonDesde.text.toString() != "día/mes/año") {
+            simpleDateFormat.parse(binding.buttonDesde.text.toString())?.time ?: 0L
+        } else {
+            0L // Si no se selecciona una fecha, usa 0L como valor por defecto
+        }
+
+        val fechaHasta = if (binding.buttonHasta.text.toString() != "día/mes/año") {
+            simpleDateFormat.parse(binding.buttonHasta.text.toString())?.time ?: Long.MAX_VALUE
+        } else {
+            Long.MAX_VALUE // Si no se selecciona una fecha, usa Long.MAX_VALUE como valor por defecto
+        }
+
+        // Verifica si hay estados seleccionados, el SeekBar ha sido modificado, o si hay fechas
+        if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE && fechaDesde == 0L && fechaHasta == Long.MAX_VALUE) {
             Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT).show()
         } else {
             // Crear un Intent para pasar los filtros a MainActivityFactura
             val intent = Intent(this, MainActivityFactura::class.java)
             intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
             intent.putExtra("valorMaximo", valorMaximo) // Pasar el valor del SeekBar
+            intent.putExtra("fechaDesde", fechaDesde)   // Pasar la fecha desde
+            intent.putExtra("fechaHasta", fechaHasta)   // Pasar la fecha hasta
             startActivity(intent)
             finish()
         }

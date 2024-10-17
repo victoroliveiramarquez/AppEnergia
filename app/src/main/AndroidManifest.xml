@@ -17,15 +17,15 @@
             android:name="com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar"
             android:exported="false" />
         <activity
-            android:name="com.aplicacion2.appenergia.filtros.MainActivityFiltroFactura"
+            android:name="com.aplicacion2.appenergia.presentation.ui.MainActivityFiltroFactura"
             android:exported="false" />
         <activity
-            android:name="com.aplicacion2.appenergia.filtros.MainActivityFactura"
+            android:name="com.aplicacion2.appenergia.presentation.ui.MainActivityFactura"
             android:exported="false" />
 
         <!-- MainActivityPortada como principal -->
         <activity
-            android:name="com.aplicacion2.appenergia.filtros.MainActivityPortada"
+            android:name="com.aplicacion2.appenergia.presentation.ui.MainActivityPortada"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

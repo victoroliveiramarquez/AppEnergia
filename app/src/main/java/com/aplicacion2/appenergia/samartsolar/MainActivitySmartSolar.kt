@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.aplicacion2.appenergia.filtros.MainActivityPortada
+import com.aplicacion2.appenergia.presentation.ui.MainActivityPortada
 import com.aplicacion2.appenergia.samartsolar.fragments.DetallesFragment
 import com.aplicacion2.appenergia.samartsolar.fragments.EnergiaFragment
 import com.aplicacion2.appenergia.samartsolar.fragments.InstalacionFragment
