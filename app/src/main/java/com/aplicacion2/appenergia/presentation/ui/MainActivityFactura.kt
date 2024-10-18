@@ -6,14 +6,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModel
-import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModelFactory
 import com.aplicacion2.appenergia.data.api.FacturaAdapter
 import com.aplicacion2.appenergia.data.api.FacturaDatabase
-import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
-import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
-import com.aplicacion2.appenergia.data.repository.FacturaRepositoryImpl
 import com.aplicacion2.appenergia.data.api.RetrofitClient
+import com.aplicacion2.appenergia.data.repository.FacturaRepositoryImpl
+import com.aplicacion2.appenergia.domain.model.Factura
+import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
+import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
+import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModel
+import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModelFactory
+import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
 
 @Suppress("DEPRECATION")
@@ -42,13 +44,17 @@ class MainActivityFactura : AppCompatActivity() {
         val filtrarFacturasUseCase = FiltrarFacturasUseCase(repository)
 
         val factory = FacturaViewModelFactory(getFacturasUseCase, filtrarFacturasUseCase)
-        facturaViewModel = ViewModelProvider(this, factory).get(FacturaViewModel::class.java)
+        facturaViewModel = ViewModelProvider(this, factory)[FacturaViewModel::class.java]
 
         // Observa los cambios en las facturas filtradas
-        facturaViewModel.facturas.observe(this, { facturas ->
-            facturaAdapter.updateData(facturas)
+        facturaViewModel.facturasBDD.observe(this) { facturas ->
+            val listaPAsada: MutableList<Factura> = mutableListOf()
+            for (i in facturas) {
+                listaPAsada.add(i.toApi())
+            }
+            facturaAdapter.updateData(listaPAsada)
             displayNoFacturasMessage(facturas.isEmpty())
-        })
+        }
 
         // Obtener los filtros del Intent
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
@@ -58,7 +64,14 @@ class MainActivityFactura : AppCompatActivity() {
 
         // Cargar las facturas aplicando los filtros
         if (estados.isNotEmpty() || valorMaximo.toDouble() != Double.MAX_VALUE || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
-            aplicarFiltros(estados, valorMaximo, fechaDesdeMillis, fechaHastaMillis)
+
+            // Aplicar filtros desde el ViewModel
+            facturaViewModel.aplicarFiltros(
+                estados,
+                valorMaximo,
+                fechaDesdeMillis,
+                fechaHastaMillis
+            )
         } else {
             // Si no hay filtros, cargar todas las facturas
             facturaViewModel.cargarFacturas()
@@ -71,11 +84,15 @@ class MainActivityFactura : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-    }
+        // Botón para navegar a la SmartaSolar
+        binding.ibAtras.setOnClickListener {
+            // Navegar de regreso a los filtros
+            val intent = Intent(this, MainActivitySmartSolar::class.java)
+            startActivity(intent)
+            finish()
+        }
 
-    // Aplicar los filtros usando el ViewModel
-    private fun aplicarFiltros(estados: List<String>, valorMaximo: Int, fechaDesde: Long, fechaHasta: Long) {
-        facturaViewModel.aplicarFiltros(estados, valorMaximo, fechaDesde, fechaHasta)
+
     }
 
     // Mostrar/ocultar el mensaje de "No hay facturas"

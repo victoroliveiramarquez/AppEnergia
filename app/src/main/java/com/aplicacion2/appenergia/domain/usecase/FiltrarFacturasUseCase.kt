@@ -1,7 +1,7 @@
 package com.aplicacion2.appenergia.domain.usecase
 
 import com.aplicacion2.appenergia.data.repository.FacturaRepository
-import com.aplicacion2.appenergia.domain.model.Factura
+import com.aplicacion2.appenergia.domain.model.FacturaBDD
 
 
 class FiltrarFacturasUseCase(
@@ -12,7 +12,7 @@ class FiltrarFacturasUseCase(
         valorMaximo: Int,
         fechaDesde: Long?,
         fechaHasta: Long?
-    ): List<Factura> {
+    ): List<FacturaBDD> {
         // Filtrar facturas en base a los criterios
         return repository.filtrarFacturas(estados, valorMaximo, fechaDesde, fechaHasta)
     }

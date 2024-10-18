@@ -5,9 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.aplicacion2.appenergia.data.db.FacturaDao
-import com.aplicacion2.appenergia.domain.model.Factura
+import com.aplicacion2.appenergia.domain.model.FacturaBDD
 
-@Database(entities = [Factura::class], version = 2)
+@Database(entities = [FacturaBDD::class], version = 4)
 abstract class FacturaDatabase : RoomDatabase() {
     abstract fun facturaDao(): FacturaDao
 

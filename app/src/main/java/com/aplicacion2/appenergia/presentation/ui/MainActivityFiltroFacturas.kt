@@ -133,10 +133,6 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         return estadosSeleccionados
     }
 
-    // Método para obtener el valor del SeekBar
-    private fun obtenerValorSeekBar(): Int {
-        return binding.seekBar.progress
-    }
 
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
@@ -191,7 +187,6 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         binding.buttonHasta.text = "día/mes/año"
     }
 }
-
 
 
 

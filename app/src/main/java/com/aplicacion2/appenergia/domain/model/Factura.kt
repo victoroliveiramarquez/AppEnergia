@@ -1,12 +1,19 @@
 package com.aplicacion2.appenergia.domain.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-@Entity(tableName = "facturas")
+
 data class Factura(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val descEstado: String,
     val importeOrdenacion: Double,
     val fecha: String
-)
+){
+
+    fun toEntity() : FacturaBDD{
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val fechaLong = simpleDateFormat.parse(fecha)?.time ?: Long.MAX_VALUE
+        return FacturaBDD(0, descEstado, importeOrdenacion, fechaLong)
+    }
+}
+
