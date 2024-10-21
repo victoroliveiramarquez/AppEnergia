@@ -12,8 +12,8 @@
         android:layout_marginLeft="19dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
-        android:contentDescription="Descripcion estática de la instalación"
-        android:text="Aquí tienes los datos de la instalación fotovoltaica en tiempo real."
+        android:contentDescription="@string/descripcion_est_tica_de_la_instalaci_n"
+        android:text="@string/aqu_tienes_los_datos_de_la_instalaci_n_fotovoltaica_en_tiempo_real"
         android:textColor="@color/black"
         android:textSize="15sp" />
 
@@ -24,8 +24,8 @@
         android:layout_marginLeft="19dp"
         android:layout_marginTop="95dp"
         android:layout_marginRight="20dp"
-        android:contentDescription="Palabra Autoconsumo"
-        android:text="Autoconsumo:"
+        android:contentDescription="@string/palabra_autoconsumo"
+        android:text="@string/autoconsumo"
         android:textColor="#9B9191"
         android:textSize="15sp" />
 
@@ -36,10 +36,10 @@
         android:layout_marginLeft="120dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="95dp"
-        android:text="92%"
+        android:text="@string/_92"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:contentDescription="Porcentaje estático"
+        android:contentDescription="@string/porcentaje_est_tico"
         />
 
     <ImageView

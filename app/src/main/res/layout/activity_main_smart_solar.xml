@@ -12,7 +12,7 @@
         android:layout_width="167dp"
         android:layout_height="61dp"
         android:layout_marginStart="20dp"
-        android:text="Smart Solar"
+        android:text="@string/smart_solar"
         android:textColor="@android:color/black"
         android:textColorLink="#040404"
         android:textSize="30sp"
@@ -39,17 +39,17 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mi instalación" />
+            android:text="@string/mi_instalaci_n" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Energía" />
+            android:text="@string/energ_a" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detalles" />
+            android:text="@string/detalles" />
     </com.google.android.material.tabs.TabLayout>
 
     <FrameLayout
@@ -72,7 +72,7 @@
         android:background="@android:color/transparent"
         android:drawableLeft="@drawable/baseline_chevron_left_24"
         android:drawableTint="#8BC34A"
-        android:text="Atrás"
+        android:text="@string/atr_s"
         android:textColor="#8BC34A"
         app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"

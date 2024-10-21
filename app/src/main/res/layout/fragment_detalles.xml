@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="CAU (Código Autoconsumo)"
+        android:text="@string/cau_c_digo_autoconsumo"
         android:textColor="#9B9191"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:textColor="#9B9191"
-        android:text="Estado solicitud alta autoconsumidor"
+        android:text="@string/estado_solicitud_alta_autoconsumidor"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearDivider1" />
@@ -67,7 +67,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:textColor="#9B9191"
-        android:text="Tipo Autoconsumo"
+        android:text="@string/tipo_autoconsumo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearDivider2" />
 
@@ -78,7 +78,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:textColor="#9B9191"
-        android:text="Compensación de excedentes"
+        android:text="@string/compensaci_n_de_excedentes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearDivider3" />
 
@@ -99,7 +99,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:textColor="#9B9191"
-        android:text="Potencia de Instalación"
+        android:text="@string/potencia_de_instalaci_n"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearDivider6" />
 

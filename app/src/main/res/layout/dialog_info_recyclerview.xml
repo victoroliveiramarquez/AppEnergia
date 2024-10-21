@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:gravity="center"
-        android:text="Información"
+        android:text="@string/informaci_n"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -28,7 +28,7 @@
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="Esta funcionalidad aún no está disponible."
+        android:text="@string/esta_funcionalidad_a_n_no_est_disponible"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:backgroundTint="#8BC34A"
-        android:text="Cerrar"
+        android:text="@string/cerrar"
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 

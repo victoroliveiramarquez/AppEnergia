@@ -12,9 +12,9 @@
         android:layout_marginLeft="70dp"
         android:layout_marginTop="420dp"
         android:layout_marginRight="70dp"
-        android:contentDescription="Anotación estatica"
+        android:contentDescription="@string/anotaci_n_estatica"
         android:gravity="center"
-        android:text="Estamos trabajando en mejorar la App. Tus paneles solares siguen produciendo, en breve podrás seguir viendo tu produccion solar. Sentimos las molestias."
+        android:text="@string/estamos_trabajando_en_mejorar_la_app_tus_paneles_solares_siguen_produciendo_en_breve_podr_s_seguir_viendo_tu_produccion_solar_sentimos_las_molestias"
         android:textSize="18sp" />
 
     <ImageView

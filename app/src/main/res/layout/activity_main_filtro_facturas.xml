@@ -26,7 +26,7 @@
         android:layout_height="26dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="20dp"
-        android:text="Por un importe"
+        android:text="@string/por_un_importe"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -57,7 +57,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="14dp"
-        android:text="0 €"
+        android:text="@string/_0"
         android:textColor="#8C8686"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="12dp"
-        android:text="300 €"
+        android:text="@string/_300"
         android:textColor="#8C8686"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
-        android:text="Por estado"
+        android:text="@string/por_estado"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -119,35 +119,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/darker_gray"
-            android:text="Pagadas" />
+            android:text="@string/pagadas" />
 
         <CheckBox
             android:id="@+id/chkAnuladas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/darker_gray"
-            android:text="Anuladas" />
+            android:text="@string/anuladas" />
 
         <CheckBox
             android:id="@+id/chkCuotaFija"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/darker_gray"
-            android:text="Cuota Fija" />
+            android:text="@string/cuota_fija" />
 
         <CheckBox
             android:id="@+id/chkPendientesPago"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/darker_gray"
-            android:text="Pendientes de pago" />
+            android:text="@string/pendientes_de_pago" />
 
         <CheckBox
             android:id="@+id/chkPlanPago"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@android:color/darker_gray"
-            android:text="Plan de pago" />
+            android:text="@string/plan_de_pago" />
 
     </LinearLayout>
 
@@ -171,8 +171,8 @@
         android:layout_height="63dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="12dp"
-        android:text="Filtrar facturas"
-        android:textSize="35dp"
+        android:text="@string/filtrar_facturas"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar" />
@@ -183,7 +183,7 @@
         android:layout_height="25dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="88dp"
-        android:text="Hasta:"
+        android:text="@string/hasta"
         android:textColor="#8C8686"
         android:textColorLink="#4A4A4A"
         app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -196,7 +196,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="89dp"
         android:textColor="#8C8686"
-        android:text="Desde:"
+        android:text="@string/desde"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar"/>
 
@@ -206,8 +206,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginBottom="44dp"
-        android:text="Con fecha de emisión"
-        android:textSize="17dp"
+        android:text="@string/con_fecha_de_emisi_n"
+        android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/buttonDesde"
         app:layout_constraintStart_toStartOf="parent" />
@@ -217,7 +217,7 @@
         android:layout_width="196dp"
         android:layout_height="50dp"
         android:backgroundTint="#8BC34A"
-        android:text="Aplicar"
+        android:text="@string/aplicar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
@@ -231,7 +231,7 @@
         android:layout_height="49dp"
         android:layout_marginTop="30dp"
         android:backgroundTint="#D7D1D1"
-        android:text="Eliminar Filtros"
+        android:text="@string/eliminar_filtros"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -244,7 +244,7 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="150€"
+        android:text="@string/_150"
         android:textColor="#8BC34A"
         android:backgroundTint="#878282"
         android:textSize="14sp"
@@ -261,7 +261,7 @@
         android:layout_height="55dp"
         android:layout_marginTop="23dp"
         android:backgroundTint="#D7D1D1"
-        android:text="día/mes/año"
+        android:text="@string/d_a_mes_a_o"
         android:textColor="@color/black"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tvPorImporte"
@@ -275,7 +275,7 @@
         android:layout_height="55dp"
         android:layout_marginEnd="4dp"
         android:backgroundTint="#D7D1D1"
-        android:text="día/mes/año"
+        android:text="@string/d_a_mes_a_o"
         android:textColor="@color/black"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tvMaxImporte"
