@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.presentation.viewmodel
 
+import FacturaViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase

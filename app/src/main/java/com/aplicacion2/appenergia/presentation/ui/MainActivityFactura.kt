@@ -1,6 +1,8 @@
 package com.aplicacion2.appenergia.presentation.ui
 
+import FacturaViewModel
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +15,6 @@ import com.aplicacion2.appenergia.data.repository.FacturaRepositoryImpl
 import com.aplicacion2.appenergia.domain.model.Factura
 import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
 import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
-import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModel
 import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModelFactory
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
@@ -24,11 +25,15 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var binding: ActivityMainFacturaBinding
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaViewModel: FacturaViewModel
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inicializar SharedPreferences para controlar la primera carga
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         // Inicializar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
@@ -48,13 +53,16 @@ class MainActivityFactura : AppCompatActivity() {
 
         // Observa los cambios en las facturas filtradas
         facturaViewModel.facturasBDD.observe(this) { facturas ->
-            val listaPAsada: MutableList<Factura> = mutableListOf()
+            val listaPasada: MutableList<Factura> = mutableListOf()
             for (i in facturas) {
-                listaPAsada.add(i.toApi())
+                listaPasada.add(i.toApi())
             }
-            facturaAdapter.updateData(listaPAsada)
+            facturaAdapter.updateData(listaPasada)
             displayNoFacturasMessage(facturas.isEmpty())
         }
+
+        // Verificar si es la primera vez que se cargan las facturas desde la API
+        val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
 
         // Obtener los filtros del Intent
         val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
@@ -62,8 +70,12 @@ class MainActivityFactura : AppCompatActivity() {
         val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
         val fechaHastaMillis = intent.getLongExtra("fechaHasta", Long.MAX_VALUE)
 
-        // Cargar las facturas aplicando los filtros
-        if (estados.isNotEmpty() || valorMaximo.toDouble() != Double.MAX_VALUE || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
+        if (esPrimeraCarga) {
+            // Cargar facturas desde la API por primera vez
+            facturaViewModel.cargarFacturasPorPrimeraVez()
+            // Guardar en SharedPreferences que ya no es la primera carga
+            sharedPreferences.edit().putBoolean("primeraCarga", false).apply()
+        } else if (estados.isNotEmpty() || valorMaximo.toDouble() != Double.MAX_VALUE || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
 
             // Aplicar filtros desde el ViewModel
             facturaViewModel.aplicarFiltros(
@@ -73,7 +85,7 @@ class MainActivityFactura : AppCompatActivity() {
                 fechaHastaMillis
             )
         } else {
-            // Si no hay filtros, cargar todas las facturas
+            // Si no hay filtros, cargar todas las facturas desde Room
             facturaViewModel.cargarFacturas()
         }
 
@@ -84,6 +96,7 @@ class MainActivityFactura : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
         // Botón para navegar a la SmartaSolar
         binding.ibAtras.setOnClickListener {
             // Navegar de regreso a los filtros
@@ -91,8 +104,6 @@ class MainActivityFactura : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-
     }
 
     // Mostrar/ocultar el mensaje de "No hay facturas"
@@ -106,6 +117,7 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
 
 
 

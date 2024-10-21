@@ -1,5 +1,3 @@
-package com.aplicacion2.appenergia.presentation.viewmodel
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +6,6 @@ import com.aplicacion2.appenergia.domain.model.FacturaBDD
 import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
 import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class FacturaViewModel(
     private val getFacturasUseCase: GetFacturasUseCase,
@@ -22,7 +18,7 @@ class FacturaViewModel(
     // Cargar todas las facturas desde la API y almacenarlas en Room
     fun cargarFacturas() {
         viewModelScope.launch {
-            val facturas = getFacturasUseCase() // Obtener todas las facturas
+            val facturas = getFacturasUseCase() // Obtener todas las facturas desde Room
             _facturasBDD.value = facturas
         }
     }
@@ -37,6 +33,14 @@ class FacturaViewModel(
         viewModelScope.launch {
             val facturasFiltradas: List<FacturaBDD> = filtrarFacturasUseCase(estados, valorMaximo, fechaDesde, fechaHasta)
             _facturasBDD.value = facturasFiltradas
+        }
+    }
+
+    // Cargar facturas desde la API por primera vez y almacenarlas en Room
+    fun cargarFacturasPorPrimeraVez() {
+        viewModelScope.launch {
+            val facturas = getFacturasUseCase(forceApi = true) // Forzar la obtención desde la API
+            _facturasBDD.value = facturas
         }
     }
 }

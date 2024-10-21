@@ -1,7 +1,6 @@
 package com.aplicacion2.appenergia.data.repository
 
 import com.aplicacion2.appenergia.data.api.FacturaService
-import com.aplicacion2.appenergia.domain.model.Factura
 import com.aplicacion2.appenergia.data.db.FacturaDao
 import com.aplicacion2.appenergia.domain.model.FacturaBDD
 
@@ -10,17 +9,43 @@ class FacturaRepositoryImpl(
     private val facturaDao: FacturaDao
 ) : FacturaRepository {
 
+    // Implementar el método getFacturas definido en la interfaz FacturaRepository
     override suspend fun getFacturas(): List<FacturaBDD> {
-        val facturasDesdeApi = api.getFacturas().facturas
-        val listaPAsada : MutableList<FacturaBDD> = mutableListOf()
-        facturaDao.deleteAll()
-        for(i in facturasDesdeApi){
-            listaPAsada.add(i.toEntity())
+        // Verificar si hay facturas almacenadas en Room
+        val facturasLocal = facturaDao.getAllFacturas()
+
+        return if (facturasLocal.isEmpty()) {
+            // Si no hay facturas en Room, obtener desde la API
+            getFacturasFromApi()
+        } else {
+            // Si ya hay facturas en Room, devolverlas
+            facturasLocal
         }
-        facturaDao.insertAll(listaPAsada)
+    }
+
+    // Obtener facturas desde la API y almacenarlas en Room
+    suspend fun getFacturasFromApi(): List<FacturaBDD> {
+        val facturasDesdeApi = api.getFacturas().facturas
+        val listaPasada: MutableList<FacturaBDD> = mutableListOf()
+
+        // Convertir facturas de la API a entidades de Room
+        for (i in facturasDesdeApi) {
+            listaPasada.add(i.toEntity())
+        }
+
+        // Almacenar las facturas en Room
+        facturaDao.deleteAll()
+        facturaDao.insertAll(listaPasada)
+
+        return listaPasada // Devuelve las facturas obtenidas desde la API
+    }
+
+    // Obtener facturas desde Room (localmente)
+    suspend fun getFacturasFromRoom(): List<FacturaBDD> {
         return facturaDao.getAllFacturas()
     }
 
+    // Filtrar facturas almacenadas en Room
     override suspend fun filtrarFacturas(
         estados: List<String>,
         valorMaximo: Int,
@@ -30,14 +55,14 @@ class FacturaRepositoryImpl(
 
         // Si la lista de estados está vacía o nula, asignar un valor por defecto
         val estadosFiltrados = if (estados.isEmpty()) {
-            listOf("Pagada", "Pendiente de pago", "Anulada", "Cuota fija", "Plan de pago") // Lista por defecto
+            listOf("Pagada", "Pendiente de pago", "Anulada", "Cuota fija", "Plan de pago")
         } else {
             estados
         }
 
         // Si el valorMaximo es 0 o negativo, asignar un valor máximo por defecto
         val valorMaximoFiltrado = if (valorMaximo <= 0) {
-            Int.MAX_VALUE // O cualquier valor máximo que quieras usar
+            Int.MAX_VALUE
         } else {
             valorMaximo
         }
@@ -56,6 +81,4 @@ class FacturaRepositoryImpl(
             fechaHastaFiltrada
         )
     }
-
-
 }

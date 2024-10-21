@@ -1,7 +1,9 @@
 package com.aplicacion2.appenergia.presentation.ui
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,8 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainFiltroFacturasBinding
     private var minDate: Long = 0
+    private lateinit var sharedPreferences: SharedPreferences
+    private var isApplyingFilters: Boolean = false // Indicador de si se está aplicando un filtro
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +28,9 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         // Inicializar ViewBinding
         binding = ActivityMainFiltroFacturasBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inicializar SharedPreferences
+        sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
 
         // Obtener la fecha mínima desde las facturas
         minDate = getMinFechaFactura()
@@ -33,6 +40,23 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
         // Configurar los botones y los CheckBoxes
         setupButtons()
+
+        // Cargar los filtros guardados
+        loadFilters()
+    }
+
+    // Este método ya no limpiará los filtros, para que no se limpien al mover la app al fondo
+    override fun onStop() {
+        super.onStop()
+        // No se limpian los filtros aquí
+    }
+
+    // Limpiar los filtros solo si la actividad se destruye por completo (cierre de la app)
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isApplyingFilters) {
+            clearFilters() // Solo limpiar los filtros si no se están aplicando
+        }
     }
 
     private fun initializeSeekBar() {
@@ -43,7 +67,7 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         val decimalFormat = DecimalFormat("#,##0", decimalFormatSymbols)
 
         binding.seekBar.max = 300
-        binding.seekBar.progress = 0
+        binding.seekBar.progress = sharedPreferences.getInt("valorMaximo", 0)
         binding.textView5.text = "${decimalFormat.format(binding.seekBar.progress)} €"
 
         binding.seekBar.setOnSeekBarChangeListener(object :
@@ -133,7 +157,6 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         return estadosSeleccionados
     }
 
-
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
         val valorMaximo = if (binding.seekBar.progress == 0) {
@@ -162,6 +185,11 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE && fechaDesde == 0L && fechaHasta == Long.MAX_VALUE) {
             Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT).show()
         } else {
+            // Guardar los filtros seleccionados en SharedPreferences
+            saveFilters(estadosSeleccionados, valorMaximo, fechaDesde, fechaHasta)
+
+            isApplyingFilters = true // Indicar que se están aplicando filtros
+
             // Crear un Intent para pasar los filtros a MainActivityFactura
             val intent = Intent(this, MainActivityFactura::class.java)
             intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
@@ -173,8 +201,46 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         }
     }
 
+    // Guardar los filtros en SharedPreferences
+    private fun saveFilters(
+        estadosSeleccionados: List<String>,
+        valorMaximo: Double,
+        fechaDesde: Long,
+        fechaHasta: Long
+    ) {
+        with(sharedPreferences.edit()) {
+            putStringSet("estados", estadosSeleccionados.toSet())
+            putInt("valorMaximo", valorMaximo.toInt())
+            putLong("fechaDesde", fechaDesde)
+            putLong("fechaHasta", fechaHasta)
+            apply()
+        }
+    }
 
-    // Limpiar filtros
+    // Cargar los filtros desde SharedPreferences
+    private fun loadFilters() {
+        val estados = sharedPreferences.getStringSet("estados", emptySet()) ?: emptySet()
+        binding.chkPagadas.isChecked = estados.contains("Pagada")
+        binding.chkPendientesPago.isChecked = estados.contains("Pendiente de pago")
+        binding.chkAnuladas.isChecked = estados.contains("Anulada")
+        binding.chkCuotaFija.isChecked = estados.contains("Cuota fija")
+        binding.chkPlanPago.isChecked = estados.contains("Plan de pago")
+
+        binding.seekBar.progress = sharedPreferences.getInt("valorMaximo", 0)
+        binding.buttonDesde.text = if (sharedPreferences.getLong("fechaDesde", 0L) != 0L) {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(sharedPreferences.getLong("fechaDesde", 0L))
+        } else {
+            "día/mes/año"
+        }
+
+        binding.buttonHasta.text = if (sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE) != Long.MAX_VALUE) {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE))
+        } else {
+            "día/mes/año"
+        }
+    }
+
+    // Limpiar filtros y SharedPreferences
     private fun clearFilters() {
         binding.seekBar.progress = 0
         binding.textView5.text = "0 €"
@@ -185,8 +251,12 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         binding.chkPlanPago.isChecked = false
         binding.buttonDesde.text = "día/mes/año"
         binding.buttonHasta.text = "día/mes/año"
+
+        // Limpiar SharedPreferences
+        sharedPreferences.edit().clear().apply()
     }
 }
+
 
 
 
