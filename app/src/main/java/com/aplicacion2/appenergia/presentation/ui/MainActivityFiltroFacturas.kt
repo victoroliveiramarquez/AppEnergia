@@ -159,12 +159,8 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
-        val valorMaximo = if (binding.seekBar.progress == 0) {
-            Double.MAX_VALUE
-        } else {
-            binding.seekBar.progress.toDouble()
-        }
-
+        // Obtener el valor actual del SeekBar, sea cual sea el valor
+        val valorMaximo = binding.seekBar.progress.toDouble()
         // Convertir las fechas de los botones a Long
         val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 

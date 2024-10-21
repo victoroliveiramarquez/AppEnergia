@@ -74,7 +74,7 @@ class MainActivityFactura : AppCompatActivity() {
             // Cargar facturas desde la API por primera vez
             facturaViewModel.cargarFacturasPorPrimeraVez()
             // Guardar en SharedPreferences que ya no es la primera carga
-            sharedPreferences.edit().putBoolean("primeraCarga", false).apply()
+            sharedPreferences.edit().putBoolean("primeraCarga", false).commit()
         } else if (estados.isNotEmpty() || valorMaximo.toDouble() != Double.MAX_VALUE || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
 
             // Aplicar filtros desde el ViewModel
