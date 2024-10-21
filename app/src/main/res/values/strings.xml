@@ -24,7 +24,6 @@
     <string name="eliminar_filtros">Eliminar Filtros</string>
     <string name="_150">150€</string>
     <string name="d_a_mes_a_o">día/mes/año</string>
-    <string name="project_energy">Project Energy</string>
     <string name="ver_facturas">Ver Facturas</string>
     <string name="smart_solar">Smart Solar</string>
     <string name="mi_instalaci_n">Mi instalación</string>
@@ -47,8 +46,7 @@
     <string name="descripcion_est_tica_de_la_instalaci_n">Descripcion estática de la instalación</string>
     <string name="aqu_tienes_los_datos_de_la_instalaci_n_fotovoltaica_en_tiempo_real">Aquí tienes los datos de la instalación fotovoltaica en tiempo real.</string>
     <string name="palabra_autoconsumo">Palabra Autoconsumo</string>
-    <string name="autoconsumo">Autoconsumo:</string>
-    <string name="_92">92%</string>
-    <string name="porcentaje_est_tico">Porcentaje estático</string>
+    <string name="energy">Energy</string>
+
 
 </resources>

@@ -25,7 +25,7 @@
         android:layout_marginTop="95dp"
         android:layout_marginRight="20dp"
         android:contentDescription="@string/palabra_autoconsumo"
-        android:text="@string/autoconsumo"
+        android:text="Autoconsumo:"
         android:textColor="#9B9191"
         android:textSize="15sp" />
 
@@ -36,10 +36,10 @@
         android:layout_marginLeft="120dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="95dp"
-        android:text="@string/_92"
+        android:text="92%"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:contentDescription="@string/porcentaje_est_tico"
+        android:contentDescription="Porcentaje estático"
         />
 
     <ImageView
