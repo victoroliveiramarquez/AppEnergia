@@ -48,4 +48,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnFacturas" />
 
+    <!-- Switch para activar/desactivar Mocks -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_mocks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:text="@string/activar_mocks"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:thumbTint="@color/green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSmartSolar" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

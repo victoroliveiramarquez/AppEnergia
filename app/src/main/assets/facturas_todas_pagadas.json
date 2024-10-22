@@ -1,0 +1,30 @@
+{
+  "numFacturas": 5,
+  "facturas": [
+    {
+      "descEstado": "Pagada",
+      "importeOrdenacion": 25.14,
+      "fecha": "05/02/2019"
+    },
+    {
+      "descEstado": "Pagada",
+      "importeOrdenacion": 22.69,
+      "fecha": "08/01/2019"
+    },
+    {
+      "descEstado": "Pagada",
+      "importeOrdenacion": 35.16,
+      "fecha": "16/11/2018"
+    },
+    {
+      "descEstado": "Pagada",
+      "importeOrdenacion": 18.27,
+      "fecha": "05/10/2018"
+    },
+    {
+      "descEstado": "Pagada",
+      "importeOrdenacion": 37.18,
+      "fecha": "07/08/2018"
+    }
+  ]
+}
