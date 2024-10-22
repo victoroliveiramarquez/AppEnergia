@@ -46,7 +46,9 @@
     <string name="descripcion_est_tica_de_la_instalaci_n">Descripcion estática de la instalación</string>
     <string name="aqu_tienes_los_datos_de_la_instalaci_n_fotovoltaica_en_tiempo_real">Aquí tienes los datos de la instalación fotovoltaica en tiempo real.</string>
     <string name="palabra_autoconsumo">Palabra Autoconsumo</string>
-    <string name="energy">Energy</string>
+    <string name="Energy">Energy</string>
+    <string name="project_energy">Project Energy</string>
+    <string name="activar_mocks">Activar Mocks</string>
 
 
 </resources>

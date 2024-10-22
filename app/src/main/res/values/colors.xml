@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>  <!-- Color blanco para los textos -->
     <color name="green">#4CAF50</color> <!-- Color verde para el estado seleccionado -->
     <color name="gray">#B0B0B0</color> <!-- Color gris para el estado no seleccionado -->
+    <color android:name="green_light_activar_mocks" name="TODO">#A5D6A7</color>
 </resources>

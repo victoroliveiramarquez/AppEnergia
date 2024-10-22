@@ -56,7 +56,7 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             holder.estado.visibility = View.VISIBLE
             holder.estado.setTextColor(Color.RED)
         } else if (factura.descEstado == "Pagada") {
-            holder.estado.visibility = View.INVISIBLE
+            holder.estado.visibility = View.INVISIBLE // Ocultar el estado pero mantener el espacio
         } else {
             holder.estado.visibility = View.GONE
         }
@@ -70,11 +70,22 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         holder.importe.text = "${decimalFormat.format(factura.importeOrdenacion)} €"
         holder.importe.gravity = Gravity.END
 
-        // Ajustar la posición del divider en función de la visibilidad de `tvEstado`
+        // Ajustar la posición del importe en función del estado
+        val layoutParamsImporte = holder.importe.layoutParams as ViewGroup.MarginLayoutParams
+        if (factura.descEstado == "Pagada") {
+            // Si está pagada, alinear el importe con la fecha (sin margen superior)
+            layoutParamsImporte.topMargin = 0
+        } else {
+            // Si no está pagada, añadir un margen para separarlo del estado
+            layoutParamsImporte.topMargin = 16 // Puedes ajustar el valor si lo necesitas
+        }
+        holder.importe.layoutParams = layoutParamsImporte
+
+        // Ajustar la posición del divider de forma fija, sin importar el estado
         holder.divider.visibility = View.VISIBLE
-        val layoutParams = holder.divider.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.topMargin = if (holder.estado.visibility == View.VISIBLE) 16 else 32
-        holder.divider.layoutParams = layoutParams
+        val layoutParamsDivider = holder.divider.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParamsDivider.topMargin = 27  // Margen fijo
+        holder.divider.layoutParams = layoutParamsDivider
 
         // Configurar el icono de la flecha hacia la derecha
         holder.icon.setImageResource(R.drawable.ic_chevron_right_24)
@@ -84,6 +95,7 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             showInfoPopup()
         }
     }
+
 
     override fun getItemCount(): Int = facturas.size
 
@@ -112,7 +124,6 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         notifyDataSetChanged()
     }
 }
-
 
 
 
