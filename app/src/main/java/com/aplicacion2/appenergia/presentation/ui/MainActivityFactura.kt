@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,15 +33,7 @@ class MainActivityFactura : AppCompatActivity() {
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicializar SharedPreferences para controlar la primera carga
-        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-
-        // Inicializar el RecyclerView
-        facturaAdapter = FacturaAdapter(emptyList(), this)
-        binding.rvFacturas.layoutManager = LinearLayoutManager(this)
-        binding.rvFacturas.adapter = facturaAdapter
-
-        // Crear el repositorio, casos de uso y el ViewModel usando el Factory
+        // Inicializar el ViewModel antes de cualquier acceso a él
         val api = RetrofitClient.facturaService
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         val repository = FacturaRepositoryImpl(api, facturaDao)
@@ -51,6 +44,30 @@ class MainActivityFactura : AppCompatActivity() {
         val factory = FacturaViewModelFactory(getFacturasUseCase, filtrarFacturasUseCase)
         facturaViewModel = ViewModelProvider(this, factory)[FacturaViewModel::class.java]
 
+        // Inicializar SharedPreferences antes de su uso
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+
+        // Restablecer filtros a los valores por defecto al iniciar
+        restablecerFiltrosPorDefecto()
+
+
+
+        // Obtener el estado de mocks desde el Intent
+        val mocksEnabled = intent.getBooleanExtra("MOCKS_ENABLED", false)
+
+        if (mocksEnabled) {
+            // Si los mocks están activados, no mostrar ninguna factura
+            displayNoFacturasMessage(true) // Mostrar mensaje de que no hay facturas
+        } else {
+            // Si los mocks están desactivados, carga las facturas desde Room o la API
+            gestionarCargarFacturas()
+        }
+
+        // Inicializar el RecyclerView
+        facturaAdapter = FacturaAdapter(emptyList(), this)
+        binding.rvFacturas.layoutManager = LinearLayoutManager(this)
+        binding.rvFacturas.adapter = facturaAdapter
+
         // Observa los cambios en las facturas filtradas
         facturaViewModel.facturasBDD.observe(this) { facturas ->
             val listaPasada: MutableList<Factura> = mutableListOf()
@@ -59,35 +76,6 @@ class MainActivityFactura : AppCompatActivity() {
             }
             facturaAdapter.updateData(listaPasada)
             displayNoFacturasMessage(facturas.isEmpty())
-        }
-
-
-        // Verificar si es la primera vez que se cargan las facturas desde la API
-        val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
-
-        // Obtener los filtros del Intent
-        val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
-        val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE).toInt()
-        val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
-        val fechaHastaMillis = intent.getLongExtra("fechaHasta", Long.MAX_VALUE)
-
-        if (esPrimeraCarga) {
-            // Cargar facturas desde la API por primera vez
-            facturaViewModel.cargarFacturasPorPrimeraVez()
-            // Guardar en SharedPreferences que ya no es la primera carga
-            sharedPreferences.edit().putBoolean("primeraCarga", false).commit()
-        } else if (estados.isNotEmpty() || valorMaximo.toDouble() != Double.MAX_VALUE || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
-
-            // Aplicar filtros desde el ViewModel
-            facturaViewModel.aplicarFiltros(
-                estados,
-                valorMaximo,
-                fechaDesdeMillis,
-                fechaHastaMillis
-            )
-        } else {
-            // Si no hay filtros, cargar todas las facturas desde Room
-            facturaViewModel.cargarFacturasPorPrimeraVez()
         }
 
         // Botón para navegar a la Activity de filtros
@@ -107,6 +95,49 @@ class MainActivityFactura : AppCompatActivity() {
         }
     }
 
+    // Función para gestionar la carga de facturas con o sin filtros
+    private fun gestionarCargarFacturas() {
+        try {
+            val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
+
+            // Obtener los filtros del Intent
+            val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
+            val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE).toInt()
+            val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
+            val fechaHastaMillis = intent.getLongExtra("fechaHasta", Long.MAX_VALUE)
+
+            if (esPrimeraCarga) {
+                // Cargar facturas desde la API por primera vez
+                facturaViewModel.cargarFacturasPorPrimeraVez()
+                // Guardar en SharedPreferences que ya no es la primera carga
+                sharedPreferences.edit().putBoolean("primeraCarga", false).commit()
+            } else if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE.toInt() || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
+                // Aplicar filtros desde el ViewModel
+                facturaViewModel.aplicarFiltros(
+                    estados,
+                    valorMaximo,
+                    fechaDesdeMillis,
+                    fechaHastaMillis
+                )
+            } else {
+                // Si no hay filtros, cargar todas las facturas desde Room
+                facturaViewModel.cargarFacturas()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al cargar facturas: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // Restablecer los filtros a sus valores por defecto
+    private fun restablecerFiltrosPorDefecto() {
+        val editor = sharedPreferences.edit()
+        editor.putStringSet("estados", emptySet()) // Restablecer estados
+        editor.putInt("valorMaximo", 0) // Restablecer valor máximo
+        editor.putLong("fechaDesde", 0L) // Restablecer fecha desde
+        editor.putLong("fechaHasta", Long.MAX_VALUE) // Restablecer fecha hasta
+        editor.apply()
+    }
     // Mostrar/ocultar el mensaje de "No hay facturas"
     private fun displayNoFacturasMessage(isVisible: Boolean) {
         binding.tvNoFacturas.visibility = if (isVisible) View.VISIBLE else View.GONE
@@ -118,6 +149,8 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
+
 
 
 

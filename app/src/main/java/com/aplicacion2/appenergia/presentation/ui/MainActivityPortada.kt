@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.facturas_tfc.databinding.ActivityMainPortadaBinding
 import com.aplicacion2.appenergia.data.api.FacturaService
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
-import com.example.facturas_tfc.databinding.ActivityMainPortadaBinding
 import com.aplicacion2.appenergia.data.api.RetrofitClient
 
 @Suppress("DEPRECATION")
@@ -27,6 +27,7 @@ class MainActivityPortada : AppCompatActivity() {
         // Configurar el botón "Ver Facturas" para que navegue a MainActivityFactura
         binding.btnFacturas.setOnClickListener {
             val intent = Intent(this, MainActivityFactura::class.java)
+            intent.putExtra("MOCKS_ENABLED", mocksEnabled) // Pasar el estado de mocks a MainActivityFactura
             startActivity(intent)
         }
 
@@ -70,4 +71,5 @@ class MainActivityPortada : AppCompatActivity() {
         }
     }
 }
+
 
