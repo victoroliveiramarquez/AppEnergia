@@ -61,6 +61,7 @@ class MainActivityFactura : AppCompatActivity() {
             displayNoFacturasMessage(facturas.isEmpty())
         }
 
+
         // Verificar si es la primera vez que se cargan las facturas desde la API
         val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
 
@@ -86,7 +87,7 @@ class MainActivityFactura : AppCompatActivity() {
             )
         } else {
             // Si no hay filtros, cargar todas las facturas desde Room
-            facturaViewModel.cargarFacturas()
+            facturaViewModel.cargarFacturasPorPrimeraVez()
         }
 
         // Botón para navegar a la Activity de filtros
