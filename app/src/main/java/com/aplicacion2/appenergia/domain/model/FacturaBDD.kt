@@ -14,7 +14,7 @@ data class FacturaBDD(
     val fecha: Long
 ){
     fun toApi() : Factura{
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) // Define el formato que quieras
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val date = Date(fecha)
         return Factura(descEstado, importeOrdenacion, dateFormat.format(date))
     }
