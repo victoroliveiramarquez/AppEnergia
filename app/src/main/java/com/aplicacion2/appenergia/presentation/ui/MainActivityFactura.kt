@@ -88,7 +88,6 @@ class MainActivityFactura : AppCompatActivity() {
         } else {
             // Si no hay filtros, cargar todas las facturas desde Room
             facturaViewModel.cargarFacturasPorPrimeraVez()
-
         }
 
         // Botón para navegar a la Activity de filtros
