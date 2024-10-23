@@ -48,6 +48,7 @@
     <string name="palabra_autoconsumo">Palabra Autoconsumo</string>
     <string name="energy">Energy</string>
     <string name="project_energy">Project Energy</string>
+    <string name="activar_mocks">Activar Mocks</string>
 
 
 </resources>
