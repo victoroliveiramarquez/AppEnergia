@@ -31,16 +31,34 @@ object RetrofitClient {
 
     // Instancia de Retromock que usa el contexto para abrir archivos de assets
     val retromock: Retromock by lazy {
+        // Lista de archivos JSON
+        val files = listOf(
+            "facturasParcialmentePagadas.json",
+            "facturasSinPagar.json",
+            "facturasTodasPagadas.json"
+        )
+        var currentIndex = 0 // Índice para rastrear el archivo actual
+
         Retromock.Builder()
             .retrofit(instance)
-            .defaultBodyFactory { fileName ->
+            .defaultBodyFactory {
+                // Obtener el contexto
                 val ctx = context ?: throw IllegalStateException("Context no inicializado en RetrofitClient")
-                ctx.assets.open("facturasParcialmentePagadas.json") // Abrir el archivo usando el contexto
+
+                // Obtener el archivo correspondiente al índice actual
+                val fileToReturn = files[currentIndex]
+
+                // Incrementar el índice y asegurarse de que no se salga de los límites
+                currentIndex = (currentIndex + 1) % files.size
+
+                // Retornar el InputStream del archivo correspondiente
+                ctx.assets.open(fileToReturn)
             }
             .build()
     }
 
     var facturaService: FacturaService = instance.create(FacturaService::class.java)
 }
+
 
 
