@@ -2,6 +2,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aplicacion2.appenergia.domain.model.Factura
 import com.aplicacion2.appenergia.domain.model.FacturaBDD
 import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
 import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
@@ -31,7 +32,8 @@ class FacturaViewModel(
         fechaHasta: Long?
     ) {
         viewModelScope.launch {
-            val facturasFiltradas: List<FacturaBDD> = filtrarFacturasUseCase(estados, valorMaximo, fechaDesde, fechaHasta)
+            val facturasFiltradas: List<FacturaBDD> =
+                filtrarFacturasUseCase(estados, valorMaximo, fechaDesde, fechaHasta)
             _facturasBDD.value = facturasFiltradas
         }
     }
@@ -42,6 +44,14 @@ class FacturaViewModel(
             val facturas = getFacturasUseCase(forceApi = true) // Forzar la obtención desde la API
             _facturasBDD.value = facturas
         }
+
+    }
+
+    fun cargarFacturasDesdeMock(facturas: List<Factura>) {
+        // Convertimos las facturas en FacturaBDD (si es necesario para tu lógica de persistencia o filtrado)
+        val facturasBDD = facturas.map { it.toEntity() }
+        _facturasBDD.value = facturasBDD
+
     }
 }
 

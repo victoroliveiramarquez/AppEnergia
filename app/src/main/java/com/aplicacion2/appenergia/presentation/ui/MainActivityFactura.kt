@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aplicacion2.appenergia.data.api.FacturaAdapter
 import com.aplicacion2.appenergia.data.api.FacturaDatabase
@@ -19,6 +20,9 @@ import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
 import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModelFactory
 import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
+import com.aplicacion2.appenergia.data.api.FacturaService
+import com.aplicacion2.appenergia.data.api.MockService
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
@@ -28,15 +32,27 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var facturaViewModel: FacturaViewModel
     private lateinit var sharedPreferences: SharedPreferences
 
+    // Instancia del servicio de mock (Retromock) usando tu MockService
+    private val mockFacturaService: MockService by lazy {
+        RetrofitClient.retromock.create(MockService::class.java)
+    }
+
+    // Instancia del servicio real (Retrofit) usando el servicio real
+    private val apiFacturaService: FacturaService by lazy {
+        RetrofitClient.instance.create(FacturaService::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
+        RetrofitClient.initContext(this)
+
         // Inicializar el ViewModel antes de cualquier acceso a él
-        val api = RetrofitClient.facturaService
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
-        val repository = FacturaRepositoryImpl(api, facturaDao)
+        val repository = FacturaRepositoryImpl(apiFacturaService, facturaDao)
 
         val getFacturasUseCase = GetFacturasUseCase(repository)
         val filtrarFacturasUseCase = FiltrarFacturasUseCase(repository)
@@ -50,23 +66,22 @@ class MainActivityFactura : AppCompatActivity() {
         // Restablecer filtros a los valores por defecto al iniciar
         restablecerFiltrosPorDefecto()
 
-
-
         // Obtener el estado de mocks desde el Intent
         val mocksEnabled = intent.getBooleanExtra("MOCKS_ENABLED", false)
-
-        if (mocksEnabled) {
-            // Si los mocks están activados, no mostrar ninguna factura
-            displayNoFacturasMessage(true) // Mostrar mensaje de que no hay facturas
-        } else {
-            // Si los mocks están desactivados, carga las facturas desde Room o la API
-            gestionarCargarFacturas()
-        }
 
         // Inicializar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
+
+        // Cargar facturas de acuerdo con el estado del switch
+        if (mocksEnabled) {
+            // Si los mocks están activados, usar el servicio simulado
+            gestionarCargarFacturasDesdeMock()
+        } else {
+            // Si los mocks están desactivados, usar el servicio real (API)
+            gestionarCargarFacturasDesdeApi()
+        }
 
         // Observa los cambios en las facturas filtradas
         facturaViewModel.facturasBDD.observe(this) { facturas ->
@@ -80,7 +95,6 @@ class MainActivityFactura : AppCompatActivity() {
 
         // Botón para navegar a la Activity de filtros
         binding.imageView.setOnClickListener {
-            // Navegar de regreso a los filtros
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
             finish()
@@ -88,15 +102,30 @@ class MainActivityFactura : AppCompatActivity() {
 
         // Botón para navegar a la SmartaSolar
         binding.ibAtras.setOnClickListener {
-            // Navegar de regreso a los filtros
             val intent = Intent(this, MainActivitySmartSolar::class.java)
             startActivity(intent)
             finish()
         }
     }
 
-    // Función para gestionar la carga de facturas con o sin filtros
-    private fun gestionarCargarFacturas() {
+    // Función para gestionar la carga de facturas con el mock
+    private fun gestionarCargarFacturasDesdeMock() {
+        try {
+            lifecycleScope.launch {
+                val response = mockFacturaService.getFacturas()
+                // Procesar la respuesta simulada de los mocks
+                val facturas = response.facturas
+                facturaAdapter.updateData(facturas)
+                displayNoFacturasMessage(facturas.isEmpty())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al cargar facturas desde Mock: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // Función para gestionar la carga de facturas desde la API real
+    private fun gestionarCargarFacturasDesdeApi() {
         try {
             val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
 
@@ -120,7 +149,7 @@ class MainActivityFactura : AppCompatActivity() {
                     fechaHastaMillis
                 )
             } else {
-                // Si no hay filtros, cargar todas las facturas desde Room
+                // Si no hay filtros, cargar todas las facturas desde Room o desde la API
                 facturaViewModel.cargarFacturas()
             }
         } catch (e: Exception) {
@@ -138,6 +167,7 @@ class MainActivityFactura : AppCompatActivity() {
         editor.putLong("fechaHasta", Long.MAX_VALUE) // Restablecer fecha hasta
         editor.apply()
     }
+
     // Mostrar/ocultar el mensaje de "No hay facturas"
     private fun displayNoFacturasMessage(isVisible: Boolean) {
         binding.tvNoFacturas.visibility = if (isVisible) View.VISIBLE else View.GONE
@@ -149,6 +179,8 @@ class MainActivityFactura : AppCompatActivity() {
         finish()
     }
 }
+
+
 
 
 
