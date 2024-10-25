@@ -23,6 +23,8 @@ import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
 import com.aplicacion2.appenergia.data.api.FacturaService
 import com.aplicacion2.appenergia.data.api.MockService
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
@@ -50,6 +52,7 @@ class MainActivityFactura : AppCompatActivity() {
         // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
         RetrofitClient.initContext(this)
 
+
         // Inicializar el ViewModel antes de cualquier acceso a él
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         val repository = FacturaRepositoryImpl(apiFacturaService, facturaDao)
@@ -69,10 +72,13 @@ class MainActivityFactura : AppCompatActivity() {
         // Obtener el estado de mocks desde el Intent
         val mocksEnabled = intent.getBooleanExtra("MOCKS_ENABLED", false)
 
+
         // Inicializar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
+
+
 
         // Cargar facturas de acuerdo con el estado del switch
         if (mocksEnabled) {
@@ -106,21 +112,59 @@ class MainActivityFactura : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+    }
+    private fun limpiarBaseDeDatos() {
+        val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
+        lifecycleScope.launch {
+            facturaDao.deleteAll()  // Método para eliminar todas las facturas de la base de datos
+        }
     }
 
-    // Función para gestionar la carga de facturas con el mock
     private fun gestionarCargarFacturasDesdeMock() {
         try {
             lifecycleScope.launch {
+                // Llama al servicio de mocks
                 val response = mockFacturaService.getFacturas()
-                // Procesar la respuesta simulada de los mocks
-                val facturas = response.facturas
-                facturaAdapter.updateData(facturas)
-                displayNoFacturasMessage(facturas.isEmpty())
+                val facturasMock = response.facturas.toMutableList()
+
+                // Obtener filtros desde el Intent o SharedPreferences
+                val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
+                val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE).toInt()
+                val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
+                val fechaHastaMillis = intent.getLongExtra("fechaHasta", Long.MAX_VALUE)
+
+                // Crear un SimpleDateFormat para analizar las fechas en los mocks
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+                // Aplicar filtros a las facturas de mock
+                val facturasFiltradas = facturasMock.filter { factura ->
+                    val fechaFactura = dateFormat.parse(factura.fecha)
+                    (estados.isEmpty() || estados.contains(factura.descEstado)) &&
+                            (factura.importeOrdenacion <= valorMaximo) &&
+                            ((fechaFactura?.time ?: 0L) >= fechaDesdeMillis) &&
+                            ((fechaFactura?.time ?: Long.MAX_VALUE) <= fechaHastaMillis)
+                }
+
+                // Actualizar la lista del adaptador con las facturas filtradas de mocks
+                facturaAdapter.updateData(facturasFiltradas)
+                displayNoFacturasMessage(facturasFiltradas.isEmpty())
+
+                // Almacenar solo el mock mostrado en la base de datos
+                guardarFacturasEnBaseDeDatos(facturasFiltradas)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al cargar facturas desde Mock: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+        limpiarBaseDeDatos()
+    }
+
+    private fun guardarFacturasEnBaseDeDatos(facturas: List<Factura>) {
+        val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
+        lifecycleScope.launch {
+            val facturasBDD = facturas.map { it.toEntity() }  // Convierte las facturas mostradas a FacturaBDD
+            facturaDao.insertAll(facturasBDD)  // Inserta solo el mock mostrado en la base de datos
         }
     }
 

@@ -23,6 +23,7 @@ interface FacturaDao {
 
     @Query("DELETE FROM facturasBDD")
     suspend fun deleteAll()
+
 }
 
 

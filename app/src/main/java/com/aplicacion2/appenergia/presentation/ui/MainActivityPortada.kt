@@ -20,6 +20,7 @@ class MainActivityPortada : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+
         // Inicializa ViewBinding
         binding = ActivityMainPortadaBinding.inflate(layoutInflater)
         setContentView(binding.root)

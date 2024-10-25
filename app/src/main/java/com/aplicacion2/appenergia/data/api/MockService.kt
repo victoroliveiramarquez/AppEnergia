@@ -11,6 +11,8 @@ interface MockService {
     @MockResponse(body = "facturasParcialmentePagadas.json")
     @MockResponse(body = "facturasSinPagar.json")
     @MockResponse(body = "facturasTodasPagadas.json")
+    @MockResponse(body = "facturasDe12.json")
+    @MockResponse(body = "facturasDe20.json")
     @GET("/")
     suspend fun getFacturas(): FacturaResponse
 }

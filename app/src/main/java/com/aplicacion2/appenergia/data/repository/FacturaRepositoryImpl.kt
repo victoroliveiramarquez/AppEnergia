@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.data.repository
 
+import android.util.Log
 import com.aplicacion2.appenergia.data.api.FacturaService
 import com.aplicacion2.appenergia.data.db.FacturaDao
 import com.aplicacion2.appenergia.domain.model.FacturaBDD
@@ -23,19 +24,27 @@ class FacturaRepositoryImpl(
         }
     }
 
-    // Obtener facturas desde la API y almacenarlas en Room
     suspend fun getFacturasFromApi(): List<FacturaBDD> {
         val facturasDesdeApi = api.getFacturas().facturas
         val listaPasada: MutableList<FacturaBDD> = mutableListOf()
+
+        // Verificar cuántas facturas se obtienen de la API
+        Log.d("API_DEBUG", "Facturas obtenidas desde la API: ${facturasDesdeApi.size}")
 
         // Convertir facturas de la API a entidades de Room
         for (i in facturasDesdeApi) {
             listaPasada.add(i.toEntity())
         }
 
+        // Verificar que la conversión a FacturaBDD es correcta
+        Log.d("CONVERSION_DEBUG", "Facturas convertidas a FacturaBDD: ${listaPasada.size}")
+
         // Almacenar las facturas en Room
         facturaDao.deleteAll()
         facturaDao.insertAll(listaPasada)
+
+        // Verificar cuántas facturas se almacenaron en Room
+        Log.d("DB_DEBUG", "Facturas almacenadas en Room: ${listaPasada.size}")
 
         return listaPasada // Devuelve las facturas obtenidas desde la API
     }

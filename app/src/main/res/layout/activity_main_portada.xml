@@ -50,7 +50,7 @@
 
     <!-- Switch para activar/desactivar Mocks -->
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_mocks"
+        android:id="@+id/switchMocks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

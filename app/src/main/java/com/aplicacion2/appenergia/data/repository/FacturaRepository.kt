@@ -13,3 +13,4 @@ interface FacturaRepository {
         fechaHasta: Long?
     ): List<FacturaBDD>
 }
+
