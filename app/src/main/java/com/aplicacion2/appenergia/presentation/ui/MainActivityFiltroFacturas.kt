@@ -7,12 +7,16 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.aplicacion2.appenergia.data.api.FacturaDatabase
 import com.example.facturas_tfc.databinding.ActivityMainFiltroFacturasBinding
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.ceil
 
 @Suppress("DEPRECATION")
 class MainActivityFiltroFactura : AppCompatActivity() {
@@ -43,19 +47,15 @@ class MainActivityFiltroFactura : AppCompatActivity() {
 
         // Cargar los filtros guardados
         loadFilters()
-    }
 
-    // Este método ya no limpiará los filtros, para que no se limpien al mover la app al fondo
-    override fun onStop() {
-        super.onStop()
-        // No se limpian los filtros aquí
+        actualizarImporteMaximoSeekBarDesdeFacturas()
     }
 
     // Limpiar los filtros solo si la actividad se destruye por completo (cierre de la app)
     override fun onDestroy() {
         super.onDestroy()
         if (!isApplyingFilters) {
-            clearFilters() // Solo limpiar los filtros si no se están aplicando
+            clearFilters()
         }
     }
 
@@ -66,24 +66,48 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         }
         val decimalFormat = DecimalFormat("#,##0", decimalFormatSymbols)
 
-        binding.seekBar.max = 300
-        binding.seekBar.progress = sharedPreferences.getInt("valorMaximo", 0)
-        binding.textView5.text = "${decimalFormat.format(binding.seekBar.progress)} €"
+        val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
+        lifecycleScope.launch {
+            // Obtener el importe máximo de las facturas actuales en la base de datos
+            val facturas = facturaDao.getAllFacturas()
+            val importeMaximo = facturas.maxOfOrNull { it.importeOrdenacion }
+                ?.let { kotlin.math.ceil(it).toInt() }
+                ?: 300 // Usa 300 si no hay facturas
 
-        binding.seekBar.setOnSeekBarChangeListener(object :
-            android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: android.widget.SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
+            // Establece el máximo del SeekBar
+            binding.seekBar.max = importeMaximo
+
+            // Inicializa el progreso a 0 o al valor guardado en SharedPreferences
+            val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
+            binding.seekBar.progress = savedProgress
+            binding.textView5.text = "${decimalFormat.format(savedProgress)} €"
+        }
+
+        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.textView5.text = "${decimalFormat.format(progress)} €"
+                // Guarda el progreso en SharedPreferences cada vez que cambia
+                sharedPreferences.edit().putInt("seekBarProgress", progress).apply()
             }
 
             override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {}
         })
     }
+
+    private fun actualizarImporteMaximoSeekBarDesdeFacturas() {
+        val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
+        lifecycleScope.launch {
+            val facturas = facturaDao.getAllFacturas()
+            val maxImporte = facturas.maxOfOrNull { it.importeOrdenacion } ?: 0.0
+            val maxSeekBarValue = kotlin.math.ceil(maxImporte).toInt()
+            binding.seekBar.max = maxSeekBarValue
+            val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, maxSeekBarValue)
+            binding.seekBar.progress = savedProgress
+        }
+    }
+
+
 
     private fun setupButtons() {
         // Configurar botón Aplicar
