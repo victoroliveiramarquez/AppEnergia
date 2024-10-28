@@ -3,6 +3,7 @@
     <style name="Base.Theme.AppEnergia" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="android:colorBackground">@color/white</item>
+        <item name="colorPrimary">@color/green</item>
     </style>
 
     <style name="Theme.AppEnergia" parent="Base.Theme.AppEnergia" />

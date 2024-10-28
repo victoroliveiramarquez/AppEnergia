@@ -43,6 +43,7 @@
         android:progressDrawable="@drawable/custom_seekbar"
         android:splitTrack="false"
         android:thumb="@drawable/custom_thumb"
+        android:progressTint="@color/green"
         app:layout_constraintBottom_toTopOf="@+id/llEstados"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -118,35 +119,30 @@
             android:id="@+id/chkPagadas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/darker_gray"
             android:text="@string/pagadas" />
 
         <CheckBox
             android:id="@+id/chkAnuladas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/darker_gray"
             android:text="@string/anuladas" />
 
         <CheckBox
             android:id="@+id/chkCuotaFija"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/darker_gray"
             android:text="@string/cuota_fija" />
 
         <CheckBox
             android:id="@+id/chkPendientesPago"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/darker_gray"
             android:text="@string/pendientes_de_pago" />
 
         <CheckBox
             android:id="@+id/chkPlanPago"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@android:color/darker_gray"
             android:text="@string/plan_de_pago" />
 
     </LinearLayout>
@@ -181,7 +177,7 @@
         android:id="@+id/textView3"
         android:layout_width="97dp"
         android:layout_height="25dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="88dp"
         android:text="@string/hasta"
         android:textColor="#8C8686"

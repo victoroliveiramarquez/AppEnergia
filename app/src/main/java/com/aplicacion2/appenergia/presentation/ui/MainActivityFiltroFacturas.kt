@@ -5,10 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.aplicacion2.appenergia.data.api.FacturaDatabase
+import com.example.facturas_tfc.R
 import com.example.facturas_tfc.databinding.ActivityMainFiltroFacturasBinding
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
@@ -19,12 +22,17 @@ import java.util.Locale
 import kotlin.math.ceil
 
 @Suppress("DEPRECATION")
-class MainActivityFiltroFactura : AppCompatActivity() {
+class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
     private lateinit var binding: ActivityMainFiltroFacturasBinding
     private var minDate: Long = 0
     private lateinit var sharedPreferences: SharedPreferences
     private var isApplyingFilters: Boolean = false // Indicador de si se está aplicando un filtro
+
+    constructor(parcel: Parcel) : this() {
+        minDate = parcel.readLong()
+        isApplyingFilters = parcel.readByte() != 0.toByte()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,21 +79,23 @@ class MainActivityFiltroFactura : AppCompatActivity() {
             // Obtener el importe máximo de las facturas actuales en la base de datos
             val facturas = facturaDao.getAllFacturas()
             val importeMaximo = facturas.maxOfOrNull { it.importeOrdenacion }
-                ?.let { kotlin.math.ceil(it).toInt() }
+                ?.let {ceil(it).toInt() }
                 ?: 300 // Usa 300 si no hay facturas
 
             // Establece el máximo del SeekBar
             binding.seekBar.max = importeMaximo
+            binding.tvMaxImporte.text = getString(R.string.importeMaximoTV, importeMaximo.toString())
+
 
             // Inicializa el progreso a 0 o al valor guardado en SharedPreferences
             val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
             binding.seekBar.progress = savedProgress
-            binding.textView5.text = "${decimalFormat.format(savedProgress)} €"
+            "${decimalFormat.format(savedProgress)} €".also { binding.textView5.text = it }
         }
 
         binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.textView5.text = "${decimalFormat.format(progress)} €"
+                "${decimalFormat.format(progress)} €".also { binding.textView5.text = it }
                 // Guarda el progreso en SharedPreferences cada vez que cambia
                 sharedPreferences.edit().putInt("seekBarProgress", progress).apply()
             }
@@ -100,7 +110,7 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         lifecycleScope.launch {
             val facturas = facturaDao.getAllFacturas()
             val maxImporte = facturas.maxOfOrNull { it.importeOrdenacion } ?: 0.0
-            val maxSeekBarValue = kotlin.math.ceil(maxImporte).toInt()
+            val maxSeekBarValue = ceil(maxImporte).toInt()
             binding.seekBar.max = maxSeekBarValue
             val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, maxSeekBarValue)
             binding.seekBar.progress = savedProgress
@@ -269,11 +279,30 @@ class MainActivityFiltroFactura : AppCompatActivity() {
         binding.chkCuotaFija.isChecked = false
         binding.chkPendientesPago.isChecked = false
         binding.chkPlanPago.isChecked = false
-        binding.buttonDesde.text = "día/mes/año"
-        binding.buttonHasta.text = "día/mes/año"
+        "día/mes/año".also { it.also { binding.buttonDesde.text = it } }
+        "día/mes/año".also { binding.buttonHasta.text = it }
 
         // Limpiar SharedPreferences
         sharedPreferences.edit().clear().apply()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(minDate)
+        parcel.writeByte(if (isApplyingFilters) 1 else 0)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MainActivityFiltroFactura> {
+        override fun createFromParcel(parcel: Parcel): MainActivityFiltroFactura {
+            return MainActivityFiltroFactura(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MainActivityFiltroFactura?> {
+            return arrayOfNulls(size)
+        }
     }
 }
 
