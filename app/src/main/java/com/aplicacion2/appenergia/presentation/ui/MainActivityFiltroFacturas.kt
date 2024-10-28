@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.presentation.ui
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.aplicacion2.appenergia.data.api.FacturaDatabase
+import com.aplicacion2.appenergia.domain.model.FacturaBDD
 import com.example.facturas_tfc.R
 import com.example.facturas_tfc.databinding.ActivityMainFiltroFacturasBinding
 import kotlinx.coroutines.launch
@@ -21,16 +23,15 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.ceil
 
+@SuppressLint("ParcelCreator")
 @Suppress("DEPRECATION")
 class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
     private lateinit var binding: ActivityMainFiltroFacturasBinding
-    private var minDate: Long = 0
     private lateinit var sharedPreferences: SharedPreferences
-    private var isApplyingFilters: Boolean = false // Indicador de si se está aplicando un filtro
+    private var isApplyingFilters: Boolean = false
 
     constructor(parcel: Parcel) : this() {
-        minDate = parcel.readLong()
         isApplyingFilters = parcel.readByte() != 0.toByte()
     }
 
@@ -44,22 +45,31 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         // Inicializar SharedPreferences
         sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
 
-        // Obtener la fecha mínima desde las facturas
-        minDate = getMinFechaFactura()
+        // Configurar fechas mínima y máxima para DatePicker
+        lifecycleScope.launch {
+            val facturas = FacturaDatabase.getDatabase(this@MainActivityFiltroFactura).facturaDao().getAllFacturas()
+            val (fechaDesde, fechaHasta) = obtenerFechasDesdeYHasta(facturas)
 
-        // Inicializar el SeekBar y configurarlo
+            binding.buttonDesde.setOnClickListener {
+                showDatePicker(fechaDesde, fechaHasta) { date -> binding.buttonDesde.text = date }
+            }
+            binding.buttonHasta.setOnClickListener {
+                showDatePicker(fechaDesde, System.currentTimeMillis()) { date -> binding.buttonHasta.text = date }
+            }
+        }
+
+        // Inicializar SeekBar
         initializeSeekBar()
 
-        // Configurar los botones y los CheckBoxes
+        // Configurar botones y CheckBoxes
         setupButtons()
 
-        // Cargar los filtros guardados
+        // Cargar filtros guardados
         loadFilters()
 
         actualizarImporteMaximoSeekBarDesdeFacturas()
     }
 
-    // Limpiar los filtros solo si la actividad se destruye por completo (cierre de la app)
     override fun onDestroy() {
         super.onDestroy()
         if (!isApplyingFilters) {
@@ -76,27 +86,21 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         lifecycleScope.launch {
-            // Obtener el importe máximo de las facturas actuales en la base de datos
             val facturas = facturaDao.getAllFacturas()
             val importeMaximo = facturas.maxOfOrNull { it.importeOrdenacion }
-                ?.let {ceil(it).toInt() }
-                ?: 300 // Usa 300 si no hay facturas
+                ?.let { ceil(it).toInt() } ?: 300
 
-            // Establece el máximo del SeekBar
             binding.seekBar.max = importeMaximo
             binding.tvMaxImporte.text = getString(R.string.importeMaximoTV, importeMaximo.toString())
 
-
-            // Inicializa el progreso a 0 o al valor guardado en SharedPreferences
             val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
             binding.seekBar.progress = savedProgress
-            "${decimalFormat.format(savedProgress)} €".also { binding.textView5.text = it }
+            binding.textView5.text = "${decimalFormat.format(savedProgress)} €"
         }
 
         binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                "${decimalFormat.format(progress)} €".also { binding.textView5.text = it }
-                // Guarda el progreso en SharedPreferences cada vez que cambia
+                binding.textView5.text = "${decimalFormat.format(progress)} €"
                 sharedPreferences.edit().putInt("seekBarProgress", progress).apply()
             }
 
@@ -117,42 +121,20 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         }
     }
 
-
-
     private fun setupButtons() {
-        // Configurar botón Aplicar
-        binding.button.setOnClickListener {
-            applyFilters()
-        }
-
-        // Configurar botón Eliminar Filtros
+        binding.button.setOnClickListener { applyFilters() }
         binding.button3.setOnClickListener {
             clearFilters()
             Toast.makeText(this, "Filtros eliminados", Toast.LENGTH_SHORT).show()
         }
         binding.imClose.setOnClickListener {
-            val intent = Intent(this, MainActivityPortada::class.java) // Navegar a la actividad de portada
+            val intent = Intent(this, MainActivityPortada::class.java)
             startActivity(intent)
-            finish() // Finalizar la actividad actual para eliminarla de la pila
-        }
-
-        // Configurar los botones de selección de fecha
-        binding.buttonDesde.setOnClickListener {
-            showDatePickerWithMinDate { date ->
-                binding.buttonDesde.text = date
-                Toast.makeText(this, "Fecha seleccionada: $date", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.buttonHasta.setOnClickListener {
-            showDatePickerWithMinDate { date ->
-                binding.buttonHasta.text = date
-                Toast.makeText(this, "Fecha seleccionada: $date", Toast.LENGTH_SHORT).show()
-            }
+            finish()
         }
     }
 
-    private fun showDatePickerWithMinDate(onDateSelected: (String) -> Unit) {
+    private fun showDatePicker(minDate: Long, maxDate: Long, onDateSelected: (String) -> Unit) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -161,8 +143,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate =
-                    String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
+                val formattedDate = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
                 onDateSelected(formattedDate)
             },
             year,
@@ -170,17 +151,17 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
             day
         )
         datePickerDialog.datePicker.minDate = minDate
+        datePickerDialog.datePicker.maxDate = maxDate
         datePickerDialog.show()
     }
 
-    // Función para obtener la fecha mínima de las facturas
-    private fun getMinFechaFactura(): Long {
-        val minFecha = "07/08/2018"
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return dateFormat.parse(minFecha)?.time ?: 0
+    // Función para obtener la fecha mínima y máxima basadas en la lista de facturas
+    private fun obtenerFechasDesdeYHasta(facturas: List<FacturaBDD>): Pair<Long, Long> {
+        val fechaMinima = facturas.minOfOrNull { it.fecha } ?: System.currentTimeMillis()
+        val fechaMaxima = System.currentTimeMillis()
+        return Pair(fechaMinima, fechaMaxima)
     }
 
-    // Método para obtener los estados seleccionados
     private fun obtenerEstadosSeleccionados(): List<String> {
         val estadosSeleccionados = mutableListOf<String>()
         if (binding.chkPagadas.isChecked) estadosSeleccionados.add("Pagada")
@@ -193,51 +174,45 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
     private fun applyFilters() {
         val estadosSeleccionados = obtenerEstadosSeleccionados()
-        // Obtener el valor actual del SeekBar, sea cual sea el valor
         val valorMaximo = binding.seekBar.progress.toDouble()
-        // Convertir las fechas de los botones a Long
-        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val fechaDesde = obtenerFechaDesde()
+        val fechaHasta = obtenerFechaHasta()
 
-        // Fechas seleccionadas en los botones
-        val fechaDesde = if (binding.buttonDesde.text.toString() != "día/mes/año") {
-            simpleDateFormat.parse(binding.buttonDesde.text.toString())?.time ?: 0L
-        } else {
-            0L // Si no se selecciona una fecha, usa 0L como valor por defecto
-        }
-
-        val fechaHasta = if (binding.buttonHasta.text.toString() != "día/mes/año") {
-            simpleDateFormat.parse(binding.buttonHasta.text.toString())?.time ?: Long.MAX_VALUE
-        } else {
-            Long.MAX_VALUE // Si no se selecciona una fecha, usa Long.MAX_VALUE como valor por defecto
-        }
-
-        // Verifica si hay estados seleccionados, el SeekBar ha sido modificado, o si hay fechas
         if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE && fechaDesde == 0L && fechaHasta == Long.MAX_VALUE) {
             Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT).show()
         } else {
-            // Guardar los filtros seleccionados en SharedPreferences
             saveFilters(estadosSeleccionados, valorMaximo, fechaDesde, fechaHasta)
 
-            isApplyingFilters = true // Indicar que se están aplicando filtros
-
-            // Crear un Intent para pasar los filtros a MainActivityFactura
+            isApplyingFilters = true
             val intent = Intent(this, MainActivityFactura::class.java)
             intent.putStringArrayListExtra("estados", ArrayList(estadosSeleccionados))
-            intent.putExtra("valorMaximo", valorMaximo) // Pasar el valor del SeekBar
-            intent.putExtra("fechaDesde", fechaDesde)   // Pasar la fecha desde
-            intent.putExtra("fechaHasta", fechaHasta)   // Pasar la fecha hasta
+            intent.putExtra("valorMaximo", valorMaximo)
+            intent.putExtra("fechaDesde", fechaDesde)
+            intent.putExtra("fechaHasta", fechaHasta)
             startActivity(intent)
             finish()
         }
     }
 
-    // Guardar los filtros en SharedPreferences
-    private fun saveFilters(
-        estadosSeleccionados: List<String>,
-        valorMaximo: Double,
-        fechaDesde: Long,
-        fechaHasta: Long
-    ) {
+    private fun obtenerFechaDesde(): Long {
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return if (binding.buttonDesde.text.toString() != "día/mes/año") {
+            simpleDateFormat.parse(binding.buttonDesde.text.toString())?.time ?: 0L
+        } else {
+            0L
+        }
+    }
+
+    private fun obtenerFechaHasta(): Long {
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return if (binding.buttonHasta.text.toString() != "día/mes/año") {
+            simpleDateFormat.parse(binding.buttonHasta.text.toString())?.time ?: Long.MAX_VALUE
+        } else {
+            Long.MAX_VALUE
+        }
+    }
+
+    private fun saveFilters(estadosSeleccionados: List<String>, valorMaximo: Double, fechaDesde: Long, fechaHasta: Long) {
         with(sharedPreferences.edit()) {
             putStringSet("estados", estadosSeleccionados.toSet())
             putInt("valorMaximo", valorMaximo.toInt())
@@ -247,7 +222,6 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         }
     }
 
-    // Cargar los filtros desde SharedPreferences
     private fun loadFilters() {
         val estados = sharedPreferences.getStringSet("estados", emptySet()) ?: emptySet()
         binding.chkPagadas.isChecked = estados.contains("Pagada")
@@ -270,7 +244,6 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         }
     }
 
-    // Limpiar filtros y SharedPreferences
     private fun clearFilters() {
         binding.seekBar.progress = 0
         binding.textView5.text = "0 €"
@@ -279,32 +252,21 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         binding.chkCuotaFija.isChecked = false
         binding.chkPendientesPago.isChecked = false
         binding.chkPlanPago.isChecked = false
-        "día/mes/año".also { it.also { binding.buttonDesde.text = it } }
-        "día/mes/año".also { binding.buttonHasta.text = it }
-
-        // Limpiar SharedPreferences
+        binding.buttonDesde.text = "día/mes/año"
+        binding.buttonHasta.text = "día/mes/año"
         sharedPreferences.edit().clear().apply()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(minDate)
         parcel.writeByte(if (isApplyingFilters) 1 else 0)
     }
 
     override fun describeContents(): Int {
         return 0
     }
-
-    companion object CREATOR : Parcelable.Creator<MainActivityFiltroFactura> {
-        override fun createFromParcel(parcel: Parcel): MainActivityFiltroFactura {
-            return MainActivityFiltroFactura(parcel)
-        }
-
-        override fun newArray(size: Int): Array<MainActivityFiltroFactura?> {
-            return arrayOfNulls(size)
-        }
-    }
 }
+
+
 
 
 

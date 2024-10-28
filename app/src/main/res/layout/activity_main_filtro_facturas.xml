@@ -35,27 +35,27 @@
 
     <SeekBar
         android:id="@+id/seekBar"
-        android:layout_width="382dp"
-        android:layout_height="25dp"
+        android:layout_width="385dp"
+        android:layout_height="27dp"
         android:max="300"
         android:padding="10dp"
         android:progress="150"
         android:progressDrawable="@drawable/custom_seekbar"
+        android:progressTint="@color/green"
         android:splitTrack="false"
         android:thumb="@drawable/custom_thumb"
-        android:progressTint="@color/green"
         app:layout_constraintBottom_toTopOf="@+id/llEstados"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/lineDivider1"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintVertical_bias="0.603" />
 
     <TextView
         android:id="@+id/tvMinImporte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="14dp"
         android:text="@string/_0"
@@ -64,7 +64,7 @@
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPorImporte"
-        app:layout_constraintVertical_bias="0.151" />
+        app:layout_constraintVertical_bias="0.161" />
 
     <TextView
         android:id="@+id/tvMaxImporte"
@@ -165,8 +165,8 @@
         android:id="@+id/textView"
         android:layout_width="371dp"
         android:layout_height="63dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/filtrar_facturas"
         android:textSize="35sp"
         android:textStyle="bold"
@@ -281,13 +281,13 @@
 
     <ImageButton
         android:id="@+id/imClose"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="57dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/close_icon_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.984"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/drawable_icon_close" />
