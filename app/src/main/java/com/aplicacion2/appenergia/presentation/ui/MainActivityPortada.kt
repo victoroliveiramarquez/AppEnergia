@@ -1,5 +1,6 @@
 package com.aplicacion2.appenergia.presentation.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -19,7 +20,6 @@ class MainActivityPortada : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
 
         // Inicializa ViewBinding
         binding = ActivityMainPortadaBinding.inflate(layoutInflater)
@@ -57,8 +57,19 @@ class MainActivityPortada : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        // Restablecer filtros al salir de la app
+        restablecerFiltrosPorDefecto()
         // Cierra todas las actividades y finaliza la aplicación cuando se presiona "Atrás"
         finishAffinity()
+    }
+
+    // Función para restablecer los filtros a sus valores por defecto
+    private fun restablecerFiltrosPorDefecto() {
+        val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            clear()
+            apply()
+        }
     }
 
     // Función para activar o desactivar el sistema de mocks
@@ -72,5 +83,6 @@ class MainActivityPortada : AppCompatActivity() {
         }
     }
 }
+
 
 

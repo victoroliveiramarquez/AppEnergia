@@ -51,7 +51,10 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         holder.fecha.text = factura.fecha.toFormattedDate()
 
         // Mostrar u ocultar el estado dependiendo de si es "Pendiente de pago"
-        if (factura.descEstado == "Pendiente de pago") {
+        if (factura.descEstado == "Pendiente de pago" ||
+            factura.descEstado == "Anulada" ||
+            factura.descEstado == "Cuota Fija" ||
+            factura.descEstado == "Plan de pago") {
             holder.estado.text = factura.descEstado
             holder.estado.visibility = View.VISIBLE
             holder.estado.setTextColor(Color.RED)

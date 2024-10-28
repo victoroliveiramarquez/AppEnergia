@@ -9,10 +9,10 @@ interface MockService {
     @Mock
     @MockCircular
     @MockResponse(body = "facturasParcialmentePagadas.json")
-    @MockResponse(body = "facturasSinPagar.json")
-    @MockResponse(body = "facturasTodasPagadas.json")
-    @MockResponse(body = "facturasDe12.json")
     @MockResponse(body = "facturasDe20.json")
+    @MockResponse(body = "facturasSinPagar.json")
+    @MockResponse(body = "facturasDe12.json")
+    @MockResponse(body = "facturasTodasPagadas.json")
     @GET("/")
     suspend fun getFacturas(): FacturaResponse
 }

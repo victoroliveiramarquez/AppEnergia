@@ -34,10 +34,12 @@ object RetrofitClient {
         // Lista de archivos JSON
         val files = listOf(
             "facturasParcialmentePagadas.json",
+            "facturasDe20.json",
             "facturasSinPagar.json",
-            "facturasTodasPagadas.json",
             "facturasDe12.json",
-            "facturasDe20.json"
+            "facturasTodasPagadas.json"
+
+
         )
         var currentIndex = 0 // Índice para rastrear el archivo actual
 
