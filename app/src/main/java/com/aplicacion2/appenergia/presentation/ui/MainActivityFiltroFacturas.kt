@@ -195,7 +195,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         if (binding.chkPagadas.isChecked) estadosSeleccionados.add("Pagada")
         if (binding.chkPendientesPago.isChecked) estadosSeleccionados.add("Pendiente de pago")
         if (binding.chkAnuladas.isChecked) estadosSeleccionados.add("Anulada")
-        if (binding.chkCuotaFija.isChecked) estadosSeleccionados.add("Cuota fija")
+        if (binding.chkCuotaFija.isChecked) estadosSeleccionados.add("Cuota Fija")
         if (binding.chkPlanPago.isChecked) estadosSeleccionados.add("Plan de pago")
         return estadosSeleccionados
     }
@@ -255,7 +255,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         binding.chkPagadas.isChecked = estados.contains("Pagada")
         binding.chkPendientesPago.isChecked = estados.contains("Pendiente de pago")
         binding.chkAnuladas.isChecked = estados.contains("Anulada")
-        binding.chkCuotaFija.isChecked = estados.contains("Cuota fija")
+        binding.chkCuotaFija.isChecked = estados.contains("Cuota Fija")
         binding.chkPlanPago.isChecked = estados.contains("Plan de pago")
 
         binding.seekBar.progress = sharedPreferences.getInt("valorMaximo", 0)
