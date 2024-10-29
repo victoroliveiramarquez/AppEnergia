@@ -15,7 +15,7 @@
         android:layout_marginBottom="12dp"
         android:gravity="center"
         android:text="@string/informaci_n"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -29,7 +29,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/esta_funcionalidad_a_n_no_est_disponible"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="16sp" />
 
     <!-- Botón de aceptar -->
@@ -40,7 +40,7 @@
         android:layout_gravity="center"
         android:backgroundTint="#8BC34A"
         android:text="@string/cerrar"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="16sp" />
 
 </LinearLayout>

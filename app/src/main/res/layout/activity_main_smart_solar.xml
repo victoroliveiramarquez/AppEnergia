@@ -14,7 +14,7 @@
         android:layout_marginStart="28dp"
         android:text="@string/smart_solar"
         android:textColor="@android:color/black"
-        android:textColorLink="#040404"
+        android:textColorLink="@android:color/black"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tabLayout"
@@ -28,13 +28,13 @@
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="12dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/flContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:tabIndicatorColor="#000000"
-        app:tabSelectedTextColor="#040404">
+        app:tabIndicatorColor="@color/black"
+        app:tabSelectedTextColor="@color/blackDos">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -69,16 +69,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="292dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:drawableLeft="@drawable/baseline_chevron_left_24"
-        android:drawableTint="#8BC34A"
+        android:drawableTint="@color/green"
         android:text="@string/atr_s"
-        android:textColor="#8BC34A"
+        android:textColor="@color/green"
         app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.75"
-        app:tint="#4CAF50" />
+        app:tint="@color/green" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,5 +4,9 @@
     <color name="white">#FFFFFF</color>  <!-- Color blanco para los textos -->
     <color name="green">#8BC34A</color> <!-- Color verde para el estado seleccionado -->
     <color name="gray">#B0B0B0</color> <!-- Color gris para el estado no seleccionado -->
+    <color name="blackDos">#040404</color> <!-- Color negro para el selector SmartSolar-->
+    <color name="transparent">#00000000</color>
+    <color name="informacion">#81B6F0</color>
+
     <color android:name="green_light_activar_mocks" name="TODO">#A5D6A7</color>
 </resources>

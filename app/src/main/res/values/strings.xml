@@ -50,6 +50,9 @@
     <string name="project_energy">Project Energy</string>
     <string name="activar_mocks">Activar Mocks</string>
     <string name="importeMaximoTV">%1$s€</string>
+    <string name="autoconsumo">Autoconsumo:</string>
+    <string name="_92">92%</string>
+    <string name="porcentaje_est_tico">Porcentaje estático</string>
 
 
 </resources>

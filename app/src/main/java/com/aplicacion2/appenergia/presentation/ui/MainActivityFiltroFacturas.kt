@@ -70,13 +70,6 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         actualizarImporteMaximoSeekBarDesdeFacturas()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!isApplyingFilters) {
-            clearFilters()
-        }
-    }
-
     private fun initializeSeekBar() {
         val decimalFormatSymbols = DecimalFormatSymbols().apply {
             decimalSeparator = ','
@@ -128,7 +121,9 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
             Toast.makeText(this, "Filtros eliminados", Toast.LENGTH_SHORT).show()
         }
         binding.imClose.setOnClickListener {
-            val intent = Intent(this, MainActivityPortada::class.java)
+            // Guardar filtros antes de regresar a MainActivityFactura
+            saveCurrentFilters()
+            val intent = Intent(this, MainActivityFactura::class.java)
             startActivity(intent)
             finish()
         }
@@ -257,12 +252,26 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         sharedPreferences.edit().clear().apply()
     }
 
+    private fun saveCurrentFilters() {
+        val estadosSeleccionados = obtenerEstadosSeleccionados()
+        val valorMaximo = binding.seekBar.progress.toDouble()
+        val fechaDesde = obtenerFechaDesde()
+        val fechaHasta = obtenerFechaHasta()
+        saveFilters(estadosSeleccionados, valorMaximo, fechaDesde, fechaHasta)
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeByte(if (isApplyingFilters) 1 else 0)
     }
 
     override fun describeContents(): Int {
         return 0
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent()
+        setResult(RESULT_OK, intent) // Establece un resultado OK para indicar que debe limpiar los filtros
+        finish() // Finaliza la actividad y vuelve a MainActivityFiltroFactura
     }
 }
 

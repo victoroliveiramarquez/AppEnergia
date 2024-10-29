@@ -29,7 +29,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/el_tiempo_estimado_de_activaci_n_de_tu_autoconsumo_es_de_1_a_2_meses_ste_variar_en_funci_n_de_tu_comunidad_aut_noma_y_distribuidora"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="16sp" />
 
     <!-- Botón de aceptar -->
@@ -38,9 +38,9 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:backgroundTint="#8BC34A"
+        android:backgroundTint="@color/green"
         android:text="@string/aceptar"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="16sp" />
 
 </LinearLayout>

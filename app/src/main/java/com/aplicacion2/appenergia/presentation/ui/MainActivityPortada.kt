@@ -28,7 +28,10 @@ class MainActivityPortada : AppCompatActivity() {
         // Configurar el botón "Ver Facturas" para que navegue a MainActivityFactura
         binding.btnFacturas.setOnClickListener {
             val intent = Intent(this, MainActivityFactura::class.java)
-            intent.putExtra("MOCKS_ENABLED", mocksEnabled) // Pasar el estado de mocks a MainActivityFactura
+            intent.putExtra(
+                "MOCKS_ENABLED",
+                mocksEnabled
+            ) // Pasar el estado de mocks a MainActivityFactura
             startActivity(intent)
         }
 
@@ -55,6 +58,13 @@ class MainActivityPortada : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Limpia los filtros cada vez que se regresa a MainActivityPortada
+        val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         // Restablecer filtros al salir de la app
@@ -76,10 +86,12 @@ class MainActivityPortada : AppCompatActivity() {
     private fun toggleMocksSystem(enable: Boolean) {
         if (enable) {
             // Activa Retromock
-            RetrofitClient.facturaService = RetrofitClient.retromock.create(FacturaService::class.java)
+            RetrofitClient.facturaService =
+                RetrofitClient.retromock.create(FacturaService::class.java)
         } else {
             // Usa Retrofit normal
-            RetrofitClient.facturaService = RetrofitClient.instance.create(FacturaService::class.java)
+            RetrofitClient.facturaService =
+                RetrofitClient.instance.create(FacturaService::class.java)
         }
     }
 }

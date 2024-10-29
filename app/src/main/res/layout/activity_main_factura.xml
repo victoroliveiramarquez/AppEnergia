@@ -39,17 +39,17 @@
         android:id="@+id/ibAtras"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="64dp"
         android:background="@android:color/transparent"
         android:drawableLeft="@drawable/baseline_chevron_left_24"
         android:drawableTint="#8BC34A"
-        android:text="@string/consumo"
+        android:text="@string/atr_s"
         android:textColor="#8BC34A"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/txtFacturas"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.126" />
+        app:layout_constraintVertical_bias="0.114" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFacturas"

@@ -10,9 +10,9 @@
         android:id="@+id/tvFrase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
         android:contentDescription="@string/descripcion_est_tica_de_la_instalaci_n"
         android:text="@string/aqu_tienes_los_datos_de_la_instalaci_n_fotovoltaica_en_tiempo_real"
         android:textColor="@color/black"
@@ -22,25 +22,24 @@
         android:id="@+id/tvAutoconsumo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
         android:layout_marginTop="95dp"
-        android:layout_marginRight="20dp"
-        android:contentDescription="@string/palabra_autoconsumo"
-        android:text="Autoconsumo:"
-        android:textColor="#9B9191"
+        android:layout_marginEnd="20dp"
+        android:text="@string/autoconsumo"
+        android:textColor="@color/gray"
         android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tvPorcentaje"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="120dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="95dp"
-        android:text="92%"
+        android:text="@string/_92"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:contentDescription="Porcentaje estático"
+        android:contentDescription="@string/porcentaje_est_tico"
         />
 
     <ImageView
@@ -51,7 +50,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="50dp"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:layout_marginRight="15dp"
         android:src="@drawable/grafico1" />
 

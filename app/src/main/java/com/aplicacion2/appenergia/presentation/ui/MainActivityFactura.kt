@@ -1,6 +1,7 @@
 package com.aplicacion2.appenergia.presentation.ui
 
 import FacturaViewModel
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -78,8 +79,6 @@ class MainActivityFactura : AppCompatActivity() {
         binding.rvFacturas.layoutManager = LinearLayoutManager(this)
         binding.rvFacturas.adapter = facturaAdapter
 
-
-
         // Cargar facturas de acuerdo con el estado del switch
         if (mocksEnabled) {
             // Si los mocks están activados, usar el servicio simulado
@@ -106,9 +105,9 @@ class MainActivityFactura : AppCompatActivity() {
             finish()
         }
 
-        // Botón para navegar a la SmartaSolar
+        // Botón para navegar atrás (portada)
         binding.ibAtras.setOnClickListener {
-            val intent = Intent(this, MainActivitySmartSolar::class.java)
+            val intent = Intent(this, MainActivityPortada::class.java)
             startActivity(intent)
             finish()
         }
@@ -217,11 +216,16 @@ class MainActivityFactura : AppCompatActivity() {
         binding.tvNoFacturas.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.rvFacturas.visibility = if (isVisible) View.GONE else View.VISIBLE
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+    private fun restablecerFiltros() {
+        val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
     }
+    override fun onBackPressed() {
+        val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply() // Limpia los filtros
+        super.onBackPressed() // Regresa a la actividad anterior
+    }
+
 }
 
 
