@@ -15,12 +15,15 @@ import com.aplicacion2.appenergia.data.api.RetrofitClient
 class MainActivityPortada : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainPortadaBinding
-    private var mocksEnabled = false // Variable para controlar el estado de los mocks
+    companion object {
+        var mocksEnabled = false // Variable para controlar el estado de los mocks
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        mocksEnabled = false
         // Inicializa ViewBinding
         binding = ActivityMainPortadaBinding.inflate(layoutInflater)
         setContentView(binding.root)

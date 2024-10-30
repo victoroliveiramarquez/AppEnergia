@@ -169,26 +169,16 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
     }
 
     private fun setupButtons() {
-        binding.button.setOnClickListener { applyFilters() }
+        binding.button.setOnClickListener { applyFilters() }  // Aplica los filtros cuando se selecciona el botón de aplicar
         binding.button3.setOnClickListener {
             clearFilters()
             Toast.makeText(this, "Filtros eliminados", Toast.LENGTH_SHORT).show()
         }
         binding.imClose.setOnClickListener {
-            saveCurrentFilters()
-            val intent = Intent(this, MainActivityFactura::class.java)
-            startActivity(intent)
-            finish()
+            onBackPressed()
         }
     }
 
-    private fun saveCurrentFilters() {
-        val estadosSeleccionados = obtenerEstadosSeleccionados()
-        val valorMaximo = binding.seekBar.progress.toDouble()
-        val fechaDesde = obtenerFechaDesde()
-        val fechaHasta = obtenerFechaHasta()
-        saveFilters(estadosSeleccionados, valorMaximo, fechaDesde, fechaHasta)
-    }
 
     private fun obtenerEstadosSeleccionados(): List<String> {
         val estadosSeleccionados = mutableListOf<String>()

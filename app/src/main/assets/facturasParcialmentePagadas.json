@@ -2,7 +2,7 @@
   "numFacturas": 5,
   "facturas": [
     {
-      "descEstado": "Pagadas",
+      "descEstado": "Pagada",
       "importeOrdenacion": 1.56,
       "fecha": "07/02/2019"
     },

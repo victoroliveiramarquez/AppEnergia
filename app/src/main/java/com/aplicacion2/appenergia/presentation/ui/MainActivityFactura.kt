@@ -13,19 +13,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aplicacion2.appenergia.data.api.FacturaAdapter
 import com.aplicacion2.appenergia.data.api.FacturaDatabase
+import com.aplicacion2.appenergia.data.api.FacturaService
+import com.aplicacion2.appenergia.data.api.MockService
 import com.aplicacion2.appenergia.data.api.RetrofitClient
 import com.aplicacion2.appenergia.data.repository.FacturaRepositoryImpl
 import com.aplicacion2.appenergia.domain.model.Factura
 import com.aplicacion2.appenergia.domain.usecase.FiltrarFacturasUseCase
 import com.aplicacion2.appenergia.domain.usecase.GetFacturasUseCase
 import com.aplicacion2.appenergia.presentation.viewmodel.FacturaViewModelFactory
-import com.aplicacion2.appenergia.samartsolar.MainActivitySmartSolar
 import com.example.facturas_tfc.databinding.ActivityMainFacturaBinding
-import com.aplicacion2.appenergia.data.api.FacturaService
-import com.aplicacion2.appenergia.data.api.MockService
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
@@ -34,6 +31,7 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaViewModel: FacturaViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var repository : FacturaRepositoryImpl
 
     // Instancia del servicio de mock (Retromock) usando tu MockService
     private val mockFacturaService: MockService by lazy {
@@ -53,10 +51,10 @@ class MainActivityFactura : AppCompatActivity() {
         // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
         RetrofitClient.initContext(this)
 
-
         // Inicializar el ViewModel antes de cualquier acceso a él
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
-        val repository = FacturaRepositoryImpl(apiFacturaService, facturaDao)
+
+        repository = FacturaRepositoryImpl(apiFacturaService, facturaDao)
 
         val getFacturasUseCase = GetFacturasUseCase(repository)
         val filtrarFacturasUseCase = FiltrarFacturasUseCase(repository)
@@ -70,9 +68,6 @@ class MainActivityFactura : AppCompatActivity() {
         // Restablecer filtros a los valores por defecto al iniciar
         restablecerFiltrosPorDefecto()
 
-        // Obtener el estado de mocks desde el Intent
-        val mocksEnabled = intent.getBooleanExtra("MOCKS_ENABLED", false)
-
 
         // Inicializar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
@@ -80,7 +75,7 @@ class MainActivityFactura : AppCompatActivity() {
         binding.rvFacturas.adapter = facturaAdapter
 
         // Cargar facturas de acuerdo con el estado del switch
-        if (mocksEnabled) {
+        if (MainActivityPortada.mocksEnabled) {
             // Si los mocks están activados, usar el servicio simulado
             gestionarCargarFacturasDesdeMock()
         } else {
@@ -102,7 +97,6 @@ class MainActivityFactura : AppCompatActivity() {
         binding.imageView.setOnClickListener {
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
-            finish()
         }
 
         // Botón para navegar atrás (portada)
@@ -113,56 +107,41 @@ class MainActivityFactura : AppCompatActivity() {
         }
 
     }
-    private fun limpiarBaseDeDatos() {
-        val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
-        lifecycleScope.launch {
-            facturaDao.deleteAll()  // Método para eliminar todas las facturas de la base de datos
-        }
-    }
 
     private fun gestionarCargarFacturasDesdeMock() {
         try {
             lifecycleScope.launch {
-                // Llama al servicio de mocks
-                val response = mockFacturaService.getFacturas()
-                val facturasMock = response.facturas.toMutableList()
-
-                // Obtener filtros desde el Intent o SharedPreferences
+                // Obtener los filtros del Intent
                 val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
                 val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE).toInt()
                 val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
                 val fechaHastaMillis = intent.getLongExtra("fechaHasta", Long.MAX_VALUE)
 
-                // Crear un SimpleDateFormat para analizar las fechas en los mocks
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE.toInt() || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
+                    // Aplicar filtros desde el ViewModel
+                    filtrado(estados, valorMaximo, fechaDesdeMillis, fechaHastaMillis)
+                } else {
+                    val response = mockFacturaService.getFacturas()
+                    val facturasMock = response.facturas.toMutableList()
+                    // Actualizar la lista del adaptador con las facturas filtradas de mocks
+                    facturaAdapter.updateData(facturasMock)
+                    displayNoFacturasMessage(facturasMock.isEmpty())
 
-                // Aplicar filtros a las facturas de mock
-                val facturasFiltradas = facturasMock.filter { factura ->
-                    val fechaFactura = dateFormat.parse(factura.fecha)
-                    (estados.isEmpty() || estados.contains(factura.descEstado)) &&
-                            (factura.importeOrdenacion <= valorMaximo) &&
-                            ((fechaFactura?.time ?: 0L) >= fechaDesdeMillis) &&
-                            ((fechaFactura?.time ?: Long.MAX_VALUE) <= fechaHastaMillis)
+                    // Almacenar solo el mock mostrado en la base de datos
+                    guardarFacturasEnBaseDeDatos(facturasMock)
                 }
-
-                // Actualizar la lista del adaptador con las facturas filtradas de mocks
-                facturaAdapter.updateData(facturasFiltradas)
-                displayNoFacturasMessage(facturasFiltradas.isEmpty())
-
-                // Almacenar solo el mock mostrado en la base de datos
-                guardarFacturasEnBaseDeDatos(facturasFiltradas)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al cargar facturas desde Mock: ${e.message}", Toast.LENGTH_LONG).show()
         }
-        limpiarBaseDeDatos()
     }
 
     private fun guardarFacturasEnBaseDeDatos(facturas: List<Factura>) {
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         lifecycleScope.launch {
             val facturasBDD = facturas.map { it.toEntity() }  // Convierte las facturas mostradas a FacturaBDD
+            facturaDao.deleteAll()
             facturaDao.insertAll(facturasBDD)  // Inserta solo el mock mostrado en la base de datos
         }
     }
@@ -185,12 +164,7 @@ class MainActivityFactura : AppCompatActivity() {
                 sharedPreferences.edit().putBoolean("primeraCarga", false).commit()
             } else if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE.toInt() || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
                 // Aplicar filtros desde el ViewModel
-                facturaViewModel.aplicarFiltros(
-                    estados,
-                    valorMaximo,
-                    fechaDesdeMillis,
-                    fechaHastaMillis
-                )
+                filtrado(estados, valorMaximo, fechaDesdeMillis, fechaHastaMillis)
             } else {
                 // Si no hay filtros, cargar todas las facturas desde Room o desde la API
                 facturaViewModel.cargarFacturas()
@@ -199,6 +173,20 @@ class MainActivityFactura : AppCompatActivity() {
             e.printStackTrace()
             Toast.makeText(this, "Error al cargar facturas: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun filtrado(
+        estados: List<String>,
+        valorMaximo: Int,
+        fechaDesdeMillis: Long,
+        fechaHastaMillis: Long
+    ) {
+        facturaViewModel.aplicarFiltros(
+            estados,
+            valorMaximo,
+            fechaDesdeMillis,
+            fechaHastaMillis
+        )
     }
 
     // Restablecer los filtros a sus valores por defecto
@@ -216,10 +204,7 @@ class MainActivityFactura : AppCompatActivity() {
         binding.tvNoFacturas.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.rvFacturas.visibility = if (isVisible) View.GONE else View.VISIBLE
     }
-    private fun restablecerFiltros() {
-        val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
-    }
+
     override fun onBackPressed() {
         val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply() // Limpia los filtros

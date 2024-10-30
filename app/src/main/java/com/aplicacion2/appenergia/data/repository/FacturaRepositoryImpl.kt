@@ -64,7 +64,7 @@ class FacturaRepositoryImpl(
 
         // Si la lista de estados está vacía o nula, asignar un valor por defecto
         val estadosFiltrados = if (estados.isEmpty()) {
-            listOf("Pagada", "Pendiente de pago", "Anulada", "Cuota fija", "Plan de pago")
+            listOf("Pagada", "Pendiente de pago", "Anulada", "Cuota Fija", "Plan de pago")
         } else {
             estados
         }
