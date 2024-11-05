@@ -15,6 +15,7 @@
     <style name="CustomDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/green</item> <!-- Cambia el color de texto de los botones a verde -->
     </style>
+
 </resources>
 
 
