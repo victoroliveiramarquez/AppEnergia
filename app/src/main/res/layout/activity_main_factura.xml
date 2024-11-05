@@ -39,7 +39,6 @@
         android:text="@string/facturas"
         android:textSize="39sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/rvFacturas"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,17 +46,12 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="59dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="188dp"
+        android:layout_width="60dp"
+        android:layout_height="64dp"
         android:layout_marginEnd="12dp"
         android:src="@drawable/filtericon_3x"
-        app:layout_constraintBottom_toTopOf="@+id/rvFacturas"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/ibAtras"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFacturas"
