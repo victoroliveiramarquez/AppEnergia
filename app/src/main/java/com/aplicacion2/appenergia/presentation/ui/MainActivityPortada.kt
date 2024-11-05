@@ -68,6 +68,7 @@ class MainActivityPortada : AppCompatActivity() {
         sharedPreferences.edit().clear().apply()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         // Restablecer filtros al salir de la app

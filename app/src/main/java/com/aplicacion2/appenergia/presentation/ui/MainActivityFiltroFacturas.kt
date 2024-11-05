@@ -142,12 +142,14 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
             val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
             binding.seekBar.progress = savedProgress
-            binding.textView5.text = "${decimalFormat.format(savedProgress)} €"
+            binding.textView5.text = getString(R.string.saved_progress_text, decimalFormat.format(savedProgress))
+
         }
 
         binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.textView5.text = "${decimalFormat.format(progress)} €"
+                binding.textView5.text = getString(R.string.progress_text, decimalFormat.format(progress))
+
                 sharedPreferences.edit().putInt("seekBarProgress", progress).apply()
             }
 
@@ -270,8 +272,9 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         binding.chkCuotaFija.isChecked = false
         binding.chkPendientesPago.isChecked = false
         binding.chkPlanPago.isChecked = false
-        binding.buttonDesde.text = "día/mes/año"
-        binding.buttonHasta.text = "día/mes/año"
+        binding.buttonDesde.text = getString(R.string.date_format_text)
+        binding.buttonHasta.text = getString(R.string.date_format_text)
+
         sharedPreferences.edit().clear().apply()
     }
 

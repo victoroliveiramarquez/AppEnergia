@@ -70,7 +70,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             groupingSeparator = '.'
         }
         val decimalFormat = DecimalFormat("###,##0.00", decimalFormatSymbols)
-        holder.importe.text = "${decimalFormat.format(factura.importeOrdenacion)} €"
+        holder.importe.text = context.getString(R.string.importe_texto, decimalFormat.format(factura.importeOrdenacion))
+
         holder.importe.gravity = Gravity.END
 
         // Ajustar la posición del importe en función del estado

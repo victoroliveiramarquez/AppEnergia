@@ -162,7 +162,7 @@ class MainActivityFactura : AppCompatActivity() {
                 // Cargar facturas desde la API por primera vez
                 facturaViewModel.cargarFacturasPorPrimeraVez()
                 // Guardar en SharedPreferences que ya no es la primera carga
-                sharedPreferences.edit().putBoolean("primeraCarga", false).commit()
+                sharedPreferences.edit().putBoolean("primeraCarga", false).apply()
             } else if (estados.isNotEmpty() || valorMaximo != Double.MAX_VALUE.toInt() || fechaDesdeMillis > 0 || fechaHastaMillis < Long.MAX_VALUE) {
                 // Aplicar filtros desde el ViewModel
                 filtrado(estados, valorMaximo, fechaDesdeMillis, fechaHastaMillis)
@@ -206,6 +206,7 @@ class MainActivityFactura : AppCompatActivity() {
         binding.rvFacturas.visibility = if (isVisible) View.GONE else View.VISIBLE
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply() // Limpia los filtros

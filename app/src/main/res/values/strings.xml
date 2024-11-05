@@ -82,7 +82,11 @@
     <string name="energy">Energy</string>
 
 
-
+    //RESTO MAIN ACTIVITYS
+    <string name="importe_texto">%1$s €</string>
+    <string name="saved_progress_text">%1$s €</string>
+    <string name="progress_text">%1$s €</string>
+    <string name="date_format_text">día/mes/año</string>
 
 
 
