@@ -16,8 +16,8 @@
         <shape android:shape="oval">
             <solid android:color="#8BC34A" /> <!-- Color del thumb -->
             <size
-                android:width="20dp"
-                android:height="20dp" />
+                android:width="18dp"
+                android:height="18dp" />
         </shape>
     </item>
 

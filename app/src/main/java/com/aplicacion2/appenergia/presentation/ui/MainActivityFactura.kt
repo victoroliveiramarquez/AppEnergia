@@ -48,6 +48,7 @@ class MainActivityFactura : AppCompatActivity() {
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
         RetrofitClient.initContext(this)
 
