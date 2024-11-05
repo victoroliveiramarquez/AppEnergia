@@ -22,9 +22,9 @@
 
     <TextView
         android:id="@+id/tvPorImporte"
-        android:layout_width="116dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="20dp"
         android:text="@string/por_un_importe"
         android:textColor="@android:color/black"
@@ -40,6 +40,8 @@
         android:max="300"
         android:padding="10dp"
         android:progress="150"
+        android:paddingEnd="13dp"
+        android:paddingStart="13dp"
         android:progressDrawable="@drawable/custom_seekbar"
         android:splitTrack="false"
         android:thumb="@drawable/custom_thumb"
@@ -49,11 +51,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/lineDivider1"
         app:layout_constraintVertical_bias="0.595" />
+
     <TextView
         android:id="@+id/tvMinImporte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="14dp"
         android:text="@string/_0"
@@ -62,7 +65,7 @@
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPorImporte"
-        app:layout_constraintVertical_bias="0.151" />
+        app:layout_constraintVertical_bias="0.243" />
 
     <TextView
         android:id="@+id/tvMaxImporte"

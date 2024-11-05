@@ -1,20 +1,20 @@
 <resources>
 
-    //ACTIVITY PORTADA
+    //ACTIVITY PORTADA XML
 
     <string name="project_energy">Project Energy</string>
     <string name="ver_facturas">Ver Facturas</string>
     <string name="smart_solar">Smart Solar</string>
     <string name="activar_mocks">Activar Mocks</string>
 
-    //ACTIVITY FACTURAS
+    //ACTIVITY FACTURAS XML
 
     <string name="atr_s">Atrás</string>
     <string name="facturas">Facturas</string>
     <string name="filtro">Filtro</string>
     <string name="no_hay_facturas_disponibles">No hay facturas disponibles</string>
 
-    //ACTIVITY FILTRO FACTURAS
+    //ACTIVITY FILTRO FACTURAS XML
 
     <string name="_0">0 €</string>
     <string name="_300">300 €</string>
@@ -37,7 +37,7 @@
     <string name="close_icon_description">Close icon</string>
     <string name="importeMaximoTV">%1$s€</string>
 
-    //ACTIVITY SMART SOLAR
+    //ACTIVITY SMART SOLAR XML
 
     <string name="mi_instalaci_n">Mi instalación</string>
     <string name="energ_a">Energía</string>

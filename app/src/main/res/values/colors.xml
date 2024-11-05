@@ -7,6 +7,9 @@
     <color name="blackDos">#040404</color> <!-- Color negro para el selector SmartSolar-->
     <color name="transparent">#00000000</color>
     <color name="informacion">#81B6F0</color>
+    <color name="primaryDarkColor">#BB86FC</color> <!-- Variante para el modo oscuro -->
+    <color name="secondaryColorDark">#03DAC5</color> <!-- Variante secundaria para el modo oscuro -->
+
 
     <color android:name="green_light_activar_mocks" name="TODO">#A5D6A7</color>
 </resources>
