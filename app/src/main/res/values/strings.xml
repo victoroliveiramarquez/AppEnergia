@@ -1,6 +1,94 @@
 <resources>
-    <string name="app_name">Facturas</string>
+
+    //ACTIVITY PORTADA XML
+
+    <string name="project_energy">Project Energy</string>
+    <string name="ver_facturas">Ver Facturas</string>
+    <string name="smart_solar">Smart Solar</string>
+    <string name="activar_mocks">Activar Mocks</string>
+
+    //ACTIVITY FACTURAS XML
+
+    <string name="atr_s">Atrás</string>
+    <string name="facturas">Facturas</string>
+    <string name="filtro">Filtro</string>
+    <string name="no_hay_facturas_disponibles">No hay facturas disponibles</string>
+
+    //ACTIVITY FILTRO FACTURAS XML
+
+    <string name="_0">0 €</string>
+    <string name="_300">300 €</string>
+    <string name="por_estado">Por estado</string>
+    <string name="por_un_importe">Por un importe</string>
+    <string name="pagadas">Pagadas</string>
+    <string name="anuladas">Anuladas</string>
+    <string name="cuota_fija">Cuota Fija</string>
+    <string name="pendientes_de_pago">Pendientes de pago</string>
+    <string name="plan_de_pago">Plan de pago</string>
+    <string name="filtrar_facturas">Filtrar facturas</string>
+    <string name="hasta">Hasta:</string>
+    <string name="desde">Desde:</string>
+    <string name="con_fecha_de_emisi_n">Con fecha de emisión</string>
+    <string name="aplicar">Aplicar</string>
+    <string name="eliminar_filtros">Eliminar Filtros</string>
+    <string name="_150">150€</string>
+    <string name="d_a_mes_a_o">día/mes/año</string>
+    <string name="day_month_year">día/mes/año</string>
     <string name="close_icon_description">Close icon</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="importeMaximoTV">%1$s€</string>
+
+    //ACTIVITY SMART SOLAR XMLy MAIN ACTIVITY
+
+    <string name="mi_instalaci_n">Mi instalación</string>
+    <string name="energ_a">Energía</string>
+    <string name="detalles">Detalles</string>
+    <string name="content_description_contenedor">Contenedor</string>
+
+    //DIALOG INFO AUTOCONSUMO
+
+    <string name="estado_solicitud_autoconsumo">Estado solicitud autoconsumo</string>
+    <string name="el_tiempo_estimado_de_activaci_n_de_tu_autoconsumo_es_de_1_a_2_meses_ste_variar_en_funci_n_de_tu_comunidad_aut_noma_y_distribuidora">El tiempo estimado de activación de tu autoconsumo es de 1 a 2 meses, éste variará en función de tu comunidad autónoma y distribuidora.</string>
+    <string name="aceptar">Aceptar</string>
+
+    //DIALOG INFO RECYCLERVIEW
+
+    <string name="informaci_n">Información</string>
+    <string name="esta_funcionalidad_a_n_no_est_disponible">Esta funcionalidad aún no está disponible.</string>
+    <string name="cerrar">Cerrar</string>
+
+
+    //FRAGMENT DETALLES
+
+    <string name="cau_c_digo_autoconsumo">CAU (Código Autoconsumo)</string>
+    <string name="estado_solicitud_alta_autoconsumidor">Estado solicitud alta autoconsumidor</string>
+    <string name="tipo_autoconsumo">Tipo Autoconsumo</string>
+    <string name="compensaci_n_de_excedentes">Compensación de excedentes</string>
+    <string name="potencia_de_instalaci_n">Potencia de Instalación</string>
+    <string name="boton_de_informacion">Boton de informacion</string>
+
+
+    //FRAGMENT ENERGIA
+    <string name="anotaci_n_estatica">Anotación estatica</string>
+    <string name="estamos_trabajando_en_mejorar_la_app_tus_paneles_solares_siguen_produciendo_en_breve_podr_s_seguir_viendo_tu_produccion_solar_sentimos_las_molestias">Estamos trabajando en mejorar la App. Tus paneles solares siguen produciendo, en breve podrás seguir viendo tu produccion solar. Sentimos las molestias.</string>
+
+    //FRAGMENT INSTALACION
+
+    <string name="aqu_tienes_los_datos_de_la_instalaci_n_fotovoltaica_en_tiempo_real">Aquí tienes los datos de la instalación fotovoltaica en tiempo real.</string>
+    <string name="autoconsumo">Autoconsumo:</string>
+    <string name="_92">92%</string>
+
+    //ANDROID MANIFEST
+
+    <string name="app_name">Facturas</string>
+    <string name="energy">Energy</string>
+
+
+    //RESTO MAIN ACTIVITYS
+    <string name="importe_texto">%1$s €</string>
+    <string name="saved_progress_text">%1$s €</string>
+    <string name="progress_text">%1$s €</string>
+    <string name="date_format_text">día/mes/año</string>
+
+
+
 </resources>

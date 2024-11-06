@@ -1,8 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Tema de la aplicación para modo oscuro -->
     <style name="Base.Theme.AppEnergia" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorBackground">@color/black</item> <!-- Fondo oscuro -->
+        <item name="colorPrimary">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/secondaryColorDark</item>
+        <item name="android:textColor">@color/white</item> <!-- Texto blanco -->
+        <item name="android:colorAccent">@color/primaryDarkColor</item> <!-- Acento oscuro -->
     </style>
 </resources>
+
