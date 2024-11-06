@@ -5,9 +5,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.aplicacion2.appenergia.presentation.ui.MainActivityPortada
-import com.aplicacion2.appenergia.samartsolar.fragments.DetallesFragment
-import com.aplicacion2.appenergia.samartsolar.fragments.EnergiaFragment
-import com.aplicacion2.appenergia.samartsolar.fragments.InstalacionFragment
 import com.example.facturas_tfc.R
 import com.example.facturas_tfc.databinding.ActivityMainSmartSolarBinding
 import com.google.android.material.tabs.TabLayoutMediator

@@ -37,11 +37,12 @@
     <string name="close_icon_description">Close icon</string>
     <string name="importeMaximoTV">%1$s€</string>
 
-    //ACTIVITY SMART SOLAR XML
+    //ACTIVITY SMART SOLAR XMLy MAIN ACTIVITY
 
     <string name="mi_instalaci_n">Mi instalación</string>
     <string name="energ_a">Energía</string>
     <string name="detalles">Detalles</string>
+    <string name="content_description_contenedor">Contenedor</string>
 
     //DIALOG INFO AUTOCONSUMO
 
