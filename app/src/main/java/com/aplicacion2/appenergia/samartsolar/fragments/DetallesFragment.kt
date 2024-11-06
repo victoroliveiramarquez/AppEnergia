@@ -52,8 +52,11 @@ class DetallesFragment : Fragment() {
         infoButton.setOnClickListener {
             infoDialog() // Mostrar el diálogo de información al hacer clic
         }
+    }
 
-        // Llamada simulada a la API con Retromock
+    override fun onResume() {
+        super.onResume()
+        // Llamada simulada a la API con Retromock para actualizar los mocks
         loadSmartSolarDetails()
     }
 
@@ -112,3 +115,4 @@ class DetallesFragment : Fragment() {
         dialogBuilder.show()
     }
 }
+
