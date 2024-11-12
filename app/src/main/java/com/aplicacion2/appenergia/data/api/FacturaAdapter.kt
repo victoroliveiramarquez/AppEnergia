@@ -35,8 +35,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         val fecha: TextView = view.findViewById(R.id.tvFecha)
         val estado: TextView = view.findViewById(R.id.tvEstado)
         val importe: TextView = view.findViewById(R.id.tvImporte)
-        val icon: ImageView = view.findViewById(R.id.ivIcon) // Referencia al ImageView del icono
-        val divider: View = view.findViewById(R.id.divider)  // Referencia al Divider
+        val icon: ImageView = view.findViewById(R.id.ivIcon)
+        val divider: View = view.findViewById(R.id.divider)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FacturaViewHolder {
@@ -50,16 +50,16 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         // Formatear la fecha con letras y mostrarla
         holder.fecha.text = factura.fecha.toFormattedDate()
 
-        // Mostrar u ocultar el estado dependiendo de si es "Pendiente de pago"
         if (factura.descEstado == "Pendiente de pago" ||
             factura.descEstado == "Anulada" ||
             factura.descEstado == "Cuota Fija" ||
-            factura.descEstado == "Plan de pago") {
+            factura.descEstado == "Plan de pago"
+        ) {
             holder.estado.text = factura.descEstado
             holder.estado.visibility = View.VISIBLE
             holder.estado.setTextColor(Color.RED)
         } else if (factura.descEstado == "Pagada") {
-            holder.estado.visibility = View.INVISIBLE // Ocultar el estado pero mantener el espacio
+            holder.estado.visibility = View.INVISIBLE // Oculta el estado pero mantiene el espacio
         } else {
             holder.estado.visibility = View.GONE
         }
@@ -70,7 +70,10 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             groupingSeparator = '.'
         }
         val decimalFormat = DecimalFormat("###,##0.00", decimalFormatSymbols)
-        holder.importe.text = context.getString(R.string.importe_texto, decimalFormat.format(factura.importeOrdenacion))
+        holder.importe.text = context.getString(
+            R.string.importe_texto,
+            decimalFormat.format(factura.importeOrdenacion)
+        )
 
         holder.importe.gravity = Gravity.END
 
@@ -105,7 +108,8 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
 
     // Función para mostrar el AlertDialog
     private fun showInfoPopup() {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
 
         val dialogBuilder = AlertDialog.Builder(context)
             .setView(dialogView)

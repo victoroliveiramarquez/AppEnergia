@@ -98,7 +98,8 @@ class DetallesFragment : Fragment() {
     // Función para mostrar el diálogo de información
     private fun infoDialog() {
         // Inflar el layout personalizado para el popup
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_info_autoconsumo, null)
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_info_autoconsumo, null)
 
         // Crear el AlertDialog con el layout personalizado
         val dialogBuilder = AlertDialog.Builder(requireContext())

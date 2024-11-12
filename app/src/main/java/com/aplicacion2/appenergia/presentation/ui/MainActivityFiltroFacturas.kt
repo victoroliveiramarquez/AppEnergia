@@ -50,10 +50,15 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
             val (fechaDesde, fechaHasta) = obtenerFechasDesdeYHasta(facturas)
 
             binding.buttonDesde.setOnClickListener {
-                showMaterialDatePicker(fechaDesde, fechaHasta) { date -> binding.buttonDesde.text = date }
+                showMaterialDatePicker(fechaDesde, fechaHasta) { date ->
+                    binding.buttonDesde.text = date
+                }
             }
             binding.buttonHasta.setOnClickListener {
-                showMaterialDatePicker(fechaDesde, System.currentTimeMillis()) { date -> binding.buttonHasta.text = date }
+                showMaterialDatePicker(
+                    fechaDesde,
+                    System.currentTimeMillis()
+                ) { date -> binding.buttonHasta.text = date }
             }
         }
 
@@ -65,9 +70,9 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
     }
 
     private suspend fun obtenerFacturasActuales(): List<FacturaBDD> {
-        // Obtener la lista de facturas activas o filtradas desde la base de datos
+        // Obtener la lista de facturas filtradas desde la base de datos
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
-        return facturaDao.getAllFacturas() // Aplica filtros si estás trabajando con una lista filtrada
+        return facturaDao.getAllFacturas() // Aplica filtros si estoy trabajando con una lista filtrada
     }
 
     private fun obtenerFechasDesdeYHasta(facturas: List<FacturaBDD>): Pair<Long, Long> {
@@ -76,7 +81,11 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         return Pair(fechaMinima, fechaMaxima)
     }
 
-    private fun showMaterialDatePicker(minDate: Long, maxDate: Long, onDateSelected: (String) -> Unit) {
+    private fun showMaterialDatePicker(
+        minDate: Long,
+        maxDate: Long,
+        onDateSelected: (String) -> Unit
+    ) {
         val originalLocale = Locale.getDefault()
         val spanishLocale = Locale("es", "ES")
         Locale.setDefault(spanishLocale)
@@ -87,7 +96,12 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         val constraintsBuilder = CalendarConstraints.Builder()
             .setStart(minDate)
             .setEnd(maxDate)
-            .setValidator(CustomDateValidator.from(minDate, maxDate)) // Usar validador personalizado
+            .setValidator(
+                CustomDateValidator.from(
+                    minDate,
+                    maxDate
+                )
+            )
 
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Calendario")
@@ -135,20 +149,30 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         lifecycleScope.launch {
             val facturas = facturaDao.getAllFacturas()
-            val importeMaximo = facturas.maxOfOrNull { it.importeOrdenacion }?.let { ceil(it).toInt() } ?: 300
+            val importeMaximo =
+                facturas.maxOfOrNull { it.importeOrdenacion }?.let { ceil(it).toInt() } ?: 300
 
             binding.seekBar.max = importeMaximo
-            binding.tvMaxImporte.text = getString(R.string.importeMaximoTV, importeMaximo.toString())
+            binding.tvMaxImporte.text =
+                getString(R.string.importeMaximoTV, importeMaximo.toString())
 
-            val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
+            val savedProgress =
+                sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, importeMaximo)
             binding.seekBar.progress = savedProgress
-            binding.textView5.text = getString(R.string.saved_progress_text, decimalFormat.format(savedProgress))
+            binding.textView5.text =
+                getString(R.string.saved_progress_text, decimalFormat.format(savedProgress))
 
         }
 
-        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.textView5.text = getString(R.string.progress_text, decimalFormat.format(progress))
+        binding.seekBar.setOnSeekBarChangeListener(object :
+            android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: android.widget.SeekBar?,
+                progress: Int,
+                fromUser: Boolean
+            ) {
+                binding.textView5.text =
+                    getString(R.string.progress_text, decimalFormat.format(progress))
 
                 sharedPreferences.edit().putInt("seekBarProgress", progress).apply()
             }
@@ -165,7 +189,8 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
             val maxImporte = facturas.maxOfOrNull { it.importeOrdenacion } ?: 0.0
             val maxSeekBarValue = ceil(maxImporte).toInt()
             binding.seekBar.max = maxSeekBarValue
-            val savedProgress = sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, maxSeekBarValue)
+            val savedProgress =
+                sharedPreferences.getInt("seekBarProgress", 0).coerceIn(0, maxSeekBarValue)
             binding.seekBar.progress = savedProgress
         }
     }
@@ -199,7 +224,8 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         val fechaHasta = obtenerFechaHasta()
 
         if (estadosSeleccionados.isEmpty() && valorMaximo == Double.MAX_VALUE && fechaDesde == 0L && fechaHasta == Long.MAX_VALUE) {
-            Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Por favor selecciona al menos un filtro", Toast.LENGTH_SHORT)
+                .show()
         } else {
             saveFilters(estadosSeleccionados, valorMaximo, fechaDesde, fechaHasta)
 
@@ -232,7 +258,12 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         }
     }
 
-    private fun saveFilters(estadosSeleccionados: List<String>, valorMaximo: Double, fechaDesde: Long, fechaHasta: Long) {
+    private fun saveFilters(
+        estadosSeleccionados: List<String>,
+        valorMaximo: Double,
+        fechaDesde: Long,
+        fechaHasta: Long
+    ) {
         with(sharedPreferences.edit()) {
             putStringSet("estados", estadosSeleccionados.toSet())
             putInt("valorMaximo", valorMaximo.toInt())
@@ -252,16 +283,23 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
 
         binding.seekBar.progress = sharedPreferences.getInt("valorMaximo", 0)
         binding.buttonDesde.text = if (sharedPreferences.getLong("fechaDesde", 0L) != 0L) {
-            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(sharedPreferences.getLong("fechaDesde", 0L))
+            SimpleDateFormat(
+                "dd/MM/yyyy",
+                Locale.getDefault()
+            ).format(sharedPreferences.getLong("fechaDesde", 0L))
         } else {
             "día/mes/año"
         }
 
-        binding.buttonHasta.text = if (sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE) != Long.MAX_VALUE) {
-            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE))
-        } else {
-            "día/mes/año"
-        }
+        binding.buttonHasta.text =
+            if (sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE) != Long.MAX_VALUE) {
+                SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                ).format(sharedPreferences.getLong("fechaHasta", Long.MAX_VALUE))
+            } else {
+                "día/mes/año"
+            }
     }
 
     private fun clearFilters() {

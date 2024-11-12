@@ -6,6 +6,11 @@ import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+//al declarar la clase como object, automáticamente se convierte en un Singleton,
+// que significa que solo existirá una única instancia de RetrofitClient durante toda la vida de la aplicación
+// (al instanciarla en MainActivityFactura).
+//Además están definidas con by lazy, lo que significa que se crean solo cuando son llamadas por primera vez.
+
 object RetrofitClient {
     private const val BASE_URL = "https://viewnextandroid.wiremockapi.cloud/"
 
@@ -24,30 +29,30 @@ object RetrofitClient {
     // Retromock necesita el contexto para acceder a los assets
     private var context: Context? = null
 
-    // Función para inicializar el contexto desde la actividad o fragmento
+    // Función para inicializar el contexto desde la activity
     fun initContext(context: Context) {
         this.context = context
     }
 
     // Instancia de Retromock que usa el contexto para abrir archivos de assets
     val retromock: Retromock by lazy {
-        // Lista de archivos JSON
+        // Lista de archivos JSON creados en la carpeta "assets"
         val files = listOf(
             "facturasParcialmentePagadas.json",
             "facturasDe20.json",
             "facturasSinPagar.json",
             "facturasDe12.json",
             "facturasTodasPagadas.json"
-
-
         )
+
         var currentIndex = 0 // Índice para rastrear el archivo actual
 
         Retromock.Builder()
             .retrofit(instance)
             .defaultBodyFactory {
                 // Obtener el contexto
-                val ctx = context ?: throw IllegalStateException("Context no inicializado en RetrofitClient")
+                val ctx = context
+                    ?: throw IllegalStateException("Context no inicializado en RetrofitClient")
 
                 // Obtener el archivo correspondiente al índice actual
                 val fileToReturn = files[currentIndex]

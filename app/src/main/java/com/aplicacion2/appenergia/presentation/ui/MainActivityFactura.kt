@@ -31,14 +31,15 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var facturaAdapter: FacturaAdapter
     private lateinit var facturaViewModel: FacturaViewModel
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var repository : FacturaRepositoryImpl
+    private lateinit var repository: FacturaRepositoryImpl
 
-    // Instancia del servicio de mock (Retromock) usando tu MockService
+    //SINGLETON
+    // Instancia del servicio de mock (Retromock) usando el MockService (@MockCircular)
     private val mockFacturaService: MockService by lazy {
         RetrofitClient.retromock.create(MockService::class.java)
     }
 
-    // Instancia del servicio real (Retrofit) usando el servicio real
+    // Instancia del servicio real (Retrofit) usando el servicio real (api)
     private val apiFacturaService: FacturaService by lazy {
         RetrofitClient.instance.create(FacturaService::class.java)
     }
@@ -134,14 +135,19 @@ class MainActivityFactura : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Error al cargar facturas desde Mock: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Error al cargar facturas desde Mock: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
     private fun guardarFacturasEnBaseDeDatos(facturas: List<Factura>) {
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
         lifecycleScope.launch {
-            val facturasBDD = facturas.map { it.toEntity() }  // Convierte las facturas mostradas a FacturaBDD
+            val facturasBDD =
+                facturas.map { it.toEntity() }  // Convierte las facturas mostradas a FacturaBDD
             facturaDao.deleteAll()
             facturaDao.insertAll(facturasBDD)  // Inserta solo el mock mostrado en la base de datos
         }
@@ -167,7 +173,7 @@ class MainActivityFactura : AppCompatActivity() {
                 // Aplicar filtros desde el ViewModel
                 filtrado(estados, valorMaximo, fechaDesdeMillis, fechaHastaMillis)
             } else {
-                // Si no hay filtros, cargar todas las facturas desde Room o desde la API
+                // Si no hay filtros, cargar todas las facturas desde Room
                 facturaViewModel.cargarFacturas()
             }
         } catch (e: Exception) {

@@ -15,6 +15,7 @@ import com.aplicacion2.appenergia.data.api.RetrofitClient
 class MainActivityPortada : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainPortadaBinding
+
     companion object {
         var mocksEnabled = false // Variable para controlar el estado de los mocks
     }

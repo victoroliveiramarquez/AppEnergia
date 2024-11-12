@@ -15,12 +15,9 @@ class FacturaRepositoryImpl(
         // Verificar si hay facturas almacenadas en Room
         val facturasLocal = facturaDao.getAllFacturas()
 
-        return if (facturasLocal.isEmpty()) {
+        return facturasLocal.ifEmpty {
             // Si no hay facturas en Room, obtener desde la API
             getFacturasFromApi()
-        } else {
-            // Si ya hay facturas en Room, devolverlas
-            facturasLocal
         }
     }
 
