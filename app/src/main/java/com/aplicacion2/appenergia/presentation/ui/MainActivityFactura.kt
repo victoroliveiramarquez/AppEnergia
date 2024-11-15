@@ -26,6 +26,9 @@ import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
+    companion object{
+        lateinit var context: Context
+    }
 
     private lateinit var binding: ActivityMainFacturaBinding
     private lateinit var facturaAdapter: FacturaAdapter
@@ -45,13 +48,14 @@ class MainActivityFactura : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        context = this
         super.onCreate(savedInstanceState)
         binding = ActivityMainFacturaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
         // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
-        RetrofitClient.initContext(this)
+        //RetrofitClient.initContext(this)
 
         // Inicializar el ViewModel antes de cualquier acceso a él
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()

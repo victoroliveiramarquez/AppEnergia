@@ -33,7 +33,6 @@ class GetFacturasUseCaseTest {
 
         // When: Llamo al caso de uso con forceApi = true
         val resultado = getFacturasUseCase(forceApi = true)
-
         // Then: Verifico que el resultado sea el esperado y que se llame al método de la API
         assertEquals(facturasFromApi, resultado)
         verify(facturaRepository).getFacturasFromApi()

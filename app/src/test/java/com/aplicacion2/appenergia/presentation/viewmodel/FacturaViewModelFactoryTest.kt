@@ -30,10 +30,8 @@ class FacturaViewModelFactoryTest {
 
     @Test
     fun `create should return FacturaViewModel instance`() {
-        // Act
         factory.create(FacturaViewModel::class.java)
 
-        // Assert
         assertTrue(true)
     }
 
@@ -42,11 +40,9 @@ class FacturaViewModelFactoryTest {
 
     @Test
     fun `create should throw IllegalArgumentException for unknown ViewModel class`() {
-        // Arrange
         exceptionRule.expect(IllegalArgumentException::class.java)
         exceptionRule.expectMessage("Unknown ViewModel class")
 
-        // Act & Assert
         factory.create(UnknownViewModel::class.java)
     }
 

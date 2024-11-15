@@ -50,18 +50,18 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         // Formatear la fecha con letras y mostrarla
         holder.fecha.text = factura.fecha.toFormattedDate()
 
-        if (factura.descEstado == "Pendiente de pago" ||
-            factura.descEstado == "Anulada" ||
-            factura.descEstado == "Cuota Fija" ||
-            factura.descEstado == "Plan de pago"
-        ) {
-            holder.estado.text = factura.descEstado
-            holder.estado.visibility = View.VISIBLE
-            holder.estado.setTextColor(Color.RED)
-        } else if (factura.descEstado == "Pagada") {
-            holder.estado.visibility = View.INVISIBLE // Oculta el estado pero mantiene el espacio
-        } else {
-            holder.estado.visibility = View.GONE
+        when (factura.descEstado) {
+            "Pendiente de pago", "Anulada", "Cuota Fija", "Plan de pago" -> {
+                holder.estado.text = factura.descEstado
+                holder.estado.visibility = View.VISIBLE
+                holder.estado.setTextColor(Color.RED)
+            }
+            "Pagada" -> {
+                holder.estado.visibility = View.INVISIBLE // Oculta el estado pero mantiene el espacio
+            }
+            else -> {
+                holder.estado.visibility = View.GONE
+            }
         }
 
         // Formatear el importe para mostrar coma en lugar de punto

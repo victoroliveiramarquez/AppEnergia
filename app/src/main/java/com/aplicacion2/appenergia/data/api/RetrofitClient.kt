@@ -2,6 +2,7 @@ package com.aplicacion2.appenergia.data.api
 
 import android.content.Context
 import co.infinum.retromock.Retromock
+import com.aplicacion2.appenergia.presentation.ui.MainActivityFactura
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,14 +27,6 @@ object RetrofitClient {
             .build()
     }
 
-    // Retromock necesita el contexto para acceder a los assets
-    private var context: Context? = null
-
-    // Función para inicializar el contexto desde la activity
-    fun initContext(context: Context) {
-        this.context = context
-    }
-
     // Instancia de Retromock que usa el contexto para abrir archivos de assets
     val retromock: Retromock by lazy {
         // Lista de archivos JSON creados en la carpeta "assets"
@@ -51,8 +44,7 @@ object RetrofitClient {
             .retrofit(instance)
             .defaultBodyFactory {
                 // Obtener el contexto
-                val ctx = context
-                    ?: throw IllegalStateException("Context no inicializado en RetrofitClient")
+                val ctx = MainActivityFactura.context
 
                 // Obtener el archivo correspondiente al índice actual
                 val fileToReturn = files[currentIndex]
