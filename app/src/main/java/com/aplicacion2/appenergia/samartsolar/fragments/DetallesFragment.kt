@@ -33,7 +33,7 @@ class DetallesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout para este fragmento
+        // Inflar el layout para este fragment
         return inflater.inflate(R.layout.fragment_detalles, container, false)
     }
 
@@ -52,8 +52,11 @@ class DetallesFragment : Fragment() {
         infoButton.setOnClickListener {
             infoDialog() // Mostrar el diálogo de información al hacer clic
         }
+    }
 
-        // Llamada simulada a la API con Retromock
+    override fun onResume() {
+        super.onResume()
+        // Llamada simulada a la API con Retromock para actualizar los mocks
         loadSmartSolarDetails()
     }
 
@@ -82,7 +85,6 @@ class DetallesFragment : Fragment() {
             }
         }
     }
-
     // Actualizar la UI con los datos obtenidos
     private fun updateUI(details: SmartSolarDetails) {
         tvCau.text = details.cau
@@ -92,10 +94,11 @@ class DetallesFragment : Fragment() {
         tvPotencia.text = details.potencia
     }
 
-    // Función para mostrar el diálogo de información
+    // Función para mostrar el dilog de información
     private fun infoDialog() {
         // Inflar el layout personalizado para el popup
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_info_autoconsumo, null)
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_info_autoconsumo, null)
 
         // Crear el AlertDialog con el layout personalizado
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -112,3 +115,4 @@ class DetallesFragment : Fragment() {
         dialogBuilder.show()
     }
 }
+

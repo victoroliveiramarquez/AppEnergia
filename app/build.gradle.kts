@@ -4,6 +4,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.kapt")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
     kotlin("plugin.serialization") version "1.9.0"
 
 }
@@ -52,14 +53,16 @@ dependencies {
     implementation(libs.retromock)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
+
+    kapt (libs.androidx.room.compiler)
+    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.ktx)
+    
     implementation(libs.androidx.lifecycle.viewmodel.ktx.v240)
     implementation(libs.androidx.lifecycle.livedata.ktx.v240)
     implementation(libs.androidx.lifecycle.common.java8)
 //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.androidx.room.compiler.v250)
+
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

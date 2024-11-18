@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomDatePickerDialogTheme">style</style>
+
+    <!-- Tema personalizado para DatePickerDialog -->
+    <style name="CustomDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Color de acento en el encabezado para el texto de la fecha -->
+        <item name="colorAccent">@android:color/holo_green_dark</item> <!-- Color para el encabezado -->
+
+        <!-- Estilo específico para los botones Aceptar/Cancelar -->
+        <item name="buttonBarPositiveButtonStyle">@style/CustomDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomDialogButtonStyle</item>
+    </style>
+
+    <!-- Estilo personalizado para los botones Aceptar y Cancelar -->
+    <style name="CustomDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/green</item> <!-- Cambia el color de texto de los botones a verde -->
+    </style>
+
 </resources>
+
+
+
