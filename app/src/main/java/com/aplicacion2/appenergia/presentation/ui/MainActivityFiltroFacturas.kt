@@ -72,7 +72,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
     private suspend fun obtenerFacturasActuales(): List<FacturaBDD> {
         // Obtener la lista de facturas filtradas desde la base de datos
         val facturaDao = FacturaDatabase.getDatabase(this).facturaDao()
-        return facturaDao.getAllFacturas() // Aplica filtros si estoy trabajando con una lista filtrada
+        return facturaDao.getAllFacturas()
     }
 
     private fun obtenerFechasDesdeYHasta(facturas: List<FacturaBDD>): Pair<Long, Long> {
@@ -81,6 +81,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
         return Pair(fechaMinima, fechaMaxima)
     }
 
+    //Calendario
     private fun showMaterialDatePicker(
         minDate: Long,
         maxDate: Long,
@@ -196,7 +197,7 @@ class MainActivityFiltroFactura() : AppCompatActivity(), Parcelable {
     }
 
     private fun setupButtons() {
-        binding.button.setOnClickListener { applyFilters() }  // Aplica los filtros cuando se selecciona el botón de aplicar
+        binding.button.setOnClickListener { applyFilters() }  // Boton aplicar
         binding.button3.setOnClickListener {
             clearFilters()
             Toast.makeText(this, "Filtros eliminados", Toast.LENGTH_SHORT).show()

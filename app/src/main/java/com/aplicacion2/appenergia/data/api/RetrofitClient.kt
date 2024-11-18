@@ -1,16 +1,11 @@
 package com.aplicacion2.appenergia.data.api
 
-import android.content.Context
 import co.infinum.retromock.Retromock
 import com.aplicacion2.appenergia.presentation.ui.MainActivityFactura
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-//al declarar la clase como object, automáticamente se convierte en un Singleton,
-// que significa que solo existirá una única instancia de RetrofitClient durante toda la vida de la aplicación
-// (al instanciarla en MainActivityFactura).
-//Además están definidas con by lazy, lo que significa que se crean solo cuando son llamadas por primera vez.
 
 object RetrofitClient {
     private const val BASE_URL = "https://viewnextandroid.wiremockapi.cloud/"
@@ -49,7 +44,7 @@ object RetrofitClient {
                 // Obtener el archivo correspondiente al índice actual
                 val fileToReturn = files[currentIndex]
 
-                // Incrementar el índice y asegurarse de que no se salga de los límites
+                // Incremento el índice y me aseguro de que no se salga de los límites
                 currentIndex = (currentIndex + 1) % files.size
 
                 // Retornar el InputStream del archivo correspondiente

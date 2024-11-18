@@ -47,7 +47,6 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
     override fun onBindViewHolder(holder: FacturaViewHolder, position: Int) {
         val factura = facturas[position]
 
-        // Formatear la fecha con letras y mostrarla
         holder.fecha.text = factura.fecha.toFormattedDate()
 
         when (factura.descEstado) {
@@ -57,14 +56,13 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
                 holder.estado.setTextColor(Color.RED)
             }
             "Pagada" -> {
-                holder.estado.visibility = View.INVISIBLE // Oculta el estado pero mantiene el espacio
+                holder.estado.visibility = View.INVISIBLE
             }
             else -> {
                 holder.estado.visibility = View.GONE
             }
         }
 
-        // Formatear el importe para mostrar coma en lugar de punto
         val decimalFormatSymbols = DecimalFormatSymbols().apply {
             decimalSeparator = ','
             groupingSeparator = '.'
@@ -77,18 +75,15 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
 
         holder.importe.gravity = Gravity.END
 
-        // Ajustar la posición del importe en función del estado
         val layoutParamsImporte = holder.importe.layoutParams as ViewGroup.MarginLayoutParams
         if (factura.descEstado == "Pagada") {
-            // Si está pagada, alinear el importe con la fecha (sin margen superior)
             layoutParamsImporte.topMargin = 0
         } else {
-            // Si no está pagada, añadir un margen para separarlo del estado
-            layoutParamsImporte.topMargin = 16 // Puedes ajustar el valor si lo necesitas
+
+            layoutParamsImporte.topMargin = 16
         }
         holder.importe.layoutParams = layoutParamsImporte
 
-        // Ajustar la posición del divider de forma fija, sin importar el estado
         holder.divider.visibility = View.VISIBLE
         val layoutParamsDivider = holder.divider.layoutParams as ViewGroup.MarginLayoutParams
         layoutParamsDivider.topMargin = 27  // Margen fijo
@@ -97,7 +92,7 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
         // Configurar el icono de la flecha hacia la derecha
         holder.icon.setImageResource(R.drawable.ic_chevron_right_24)
 
-        // Configurar el clic en la celda para mostrar el popup de información
+        //  clic en la celda para mostrar el popup de información
         holder.itemView.setOnClickListener {
             showInfoPopup()
         }
@@ -106,7 +101,7 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
 
     override fun getItemCount(): Int = facturas.size
 
-    // Función para mostrar el AlertDialog
+    // AlertDialog
     private fun showInfoPopup() {
         val dialogView =
             LayoutInflater.from(context).inflate(R.layout.dialog_info_recyclerview, null)
@@ -115,17 +110,16 @@ class FacturaAdapter(private var facturas: List<Factura>, private val context: C
             .setView(dialogView)
             .create()
 
-        // Configurar la acción del botón "Aceptar" dentro del dialogView
+        // botón "Aceptar" dentro del dialogView
         val btnAceptar: TextView = dialogView.findViewById(R.id.btnCerrar)
         btnAceptar.setOnClickListener {
             dialogBuilder.dismiss() // Cierra el dialog cuando se pulsa el botón "Aceptar"
         }
 
-        // Mostrar el AlertDialog con el diseño personalizado
         dialogBuilder.show()
     }
 
-    // Función para actualizar los datos del adaptador
+    // actualizar los datos del adaptador
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newFacturas: List<Factura>) {
         facturas = newFacturas

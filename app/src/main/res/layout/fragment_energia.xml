@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context="com.aplicacion2.appenergia.samartsolar.fragments.EnergiaFragment">
 
-    <!-- Imagen principal -->
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="0dp"
@@ -21,7 +20,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="1:1" />
 
-    <!-- Texto descriptivo centrado -->
     <TextView
         android:id="@+id/tvFrase"
         android:layout_width="0dp"

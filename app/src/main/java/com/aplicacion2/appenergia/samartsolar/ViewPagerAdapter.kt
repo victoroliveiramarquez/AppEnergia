@@ -12,9 +12,9 @@ class ViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activi
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> InstalacionFragment()  // Fragmento de Mi instalación
-            1 -> EnergiaFragment()        // Fragmento de Energía
-            2 -> DetallesFragment()       // Fragmento de Detalles
+            0 -> InstalacionFragment()     // Fragment  Mi instalación
+            1 -> EnergiaFragment()        // Fragment Energía
+            2 -> DetallesFragment()       // Fragment Detalles
             else -> throw IllegalStateException("Unexpected position $position")
         }
     }

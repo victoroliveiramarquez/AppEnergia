@@ -48,7 +48,7 @@ class FacturaViewModel(
     }
 
     fun cargarFacturasDesdeMock(facturas: List<Factura>) {
-        // Convertimos las facturas en FacturaBDD (si es necesario para tu lógica de persistencia o filtrado)
+        // Convertimos las facturas en FacturaBDD
         val facturasBDD = facturas.map { it.toEntity() }
         _facturasBDD.value = facturasBDD
 

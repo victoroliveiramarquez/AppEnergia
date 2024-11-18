@@ -23,7 +23,7 @@ class MainActivitySmartSolar : AppCompatActivity() {
 
         enableEdgeToEdge()
 
-        // Configurar el botón "Atrás" para que navegue a la Activity MainActivityPortada
+        // Configurar el botón "Atrás" para que navegue a MainActivityPortada
         binding.ibAtras.setOnClickListener {
             val intent = Intent(this, MainActivityPortada::class.java)
             startActivity(intent)

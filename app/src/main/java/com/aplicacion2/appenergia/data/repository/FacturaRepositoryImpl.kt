@@ -10,9 +10,8 @@ class FacturaRepositoryImpl(
     private val facturaDao: FacturaDao
 ) : FacturaRepository {
 
-    // Implementar el método getFacturas definido en la interfaz FacturaRepository
     override suspend fun getFacturas(): List<FacturaBDD> {
-        // Verificar si hay facturas almacenadas en Room
+        // Verifico si hay facturas almacenadas en Room
         val facturasLocal = facturaDao.getAllFacturas()
 
         return facturasLocal.ifEmpty {
@@ -25,25 +24,24 @@ class FacturaRepositoryImpl(
         val facturasDesdeApi = api.getFacturas().facturas
         val listaPasada: MutableList<FacturaBDD> = mutableListOf()
 
-        // Verificar cuántas facturas se obtienen de la API
+        // Verifico cuántas facturas se obtienen de la API con un LOG
         Log.d("API_DEBUG", "Facturas obtenidas desde la API: ${facturasDesdeApi.size}")
 
-        // Convertir facturas de la API a entidades de Room
         for (i in facturasDesdeApi) {
             listaPasada.add(i.toEntity())
         }
 
-        // Verificar que la conversión a FacturaBDD es correcta
+        // Verifico que la conversión a FacturaBDD es correcta con un LOG
         Log.d("CONVERSION_DEBUG", "Facturas convertidas a FacturaBDD: ${listaPasada.size}")
 
-        // Almacenar las facturas en Room
+        // Almaceno las facturas en Room
         facturaDao.deleteAll()
         facturaDao.insertAll(listaPasada)
 
-        // Verificar cuántas facturas se almacenaron en Room
+        // Verifico cuántas facturas se almacenaron en Room con un LOG
         Log.d("DB_DEBUG", "Facturas almacenadas en Room: ${listaPasada.size}")
 
-        return listaPasada // Devuelve las facturas obtenidas desde la API
+        return listaPasada // Devuelvo las facturas obtenidas desde la API
     }
 
     // Obtener facturas desde Room (localmente)
@@ -59,14 +57,14 @@ class FacturaRepositoryImpl(
         fechaHasta: Long?
     ): List<FacturaBDD> {
 
-        // Si la lista de estados está vacía o nula, asignar un valor por defecto
+        // Si la lista de estados está vacía o nula, asigno un valor por defecto
         val estadosFiltrados = if (estados.isEmpty()) {
             listOf("Pagada", "Pendiente de pago", "Anulada", "Cuota Fija", "Plan de pago")
         } else {
             estados
         }
 
-        // Si el valorMaximo es 0 o negativo, asignar un valor máximo por defecto
+        // Si el valorMaximo es 0 o negativo, asigno un valor máximo por defecto
         val valorMaximoFiltrado = if (valorMaximo <= 0) {
             Int.MAX_VALUE
         } else {
@@ -79,7 +77,7 @@ class FacturaRepositoryImpl(
         // Si la fechaHasta es nula, usar el valor máximo por defecto (Long.MAX_VALUE)
         val fechaHastaFiltrada = fechaHasta ?: Long.MAX_VALUE
 
-        // Llamar al filtro de la base de datos usando los valores filtrados
+        // Llamo al filtro de la base de datos usando los valores filtrados
         return facturaDao.filterFacturasByEstadoYValorYFechas(
             estadosFiltrados,
             valorMaximoFiltrado,

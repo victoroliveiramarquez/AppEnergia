@@ -33,7 +33,7 @@ class DetallesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout para este fragmento
+        // Inflar el layout para este fragment
         return inflater.inflate(R.layout.fragment_detalles, container, false)
     }
 
@@ -85,7 +85,6 @@ class DetallesFragment : Fragment() {
             }
         }
     }
-
     // Actualizar la UI con los datos obtenidos
     private fun updateUI(details: SmartSolarDetails) {
         tvCau.text = details.cau
@@ -95,7 +94,7 @@ class DetallesFragment : Fragment() {
         tvPotencia.text = details.potencia
     }
 
-    // Función para mostrar el diálogo de información
+    // Función para mostrar el dilog de información
     private fun infoDialog() {
         // Inflar el layout personalizado para el popup
         val dialogView =

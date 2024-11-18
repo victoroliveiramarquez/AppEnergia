@@ -45,7 +45,7 @@ class MainActivityPortada : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Configurar el Switch para activar/desactivar mocks
+        // Switch de los Mocks
         binding.switchMocks.setOnCheckedChangeListener { _, isChecked ->
             mocksEnabled = isChecked // Actualiza el estado de los mocks
 

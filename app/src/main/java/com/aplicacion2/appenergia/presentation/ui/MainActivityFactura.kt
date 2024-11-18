@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class MainActivityFactura : AppCompatActivity() {
-    companion object{
+    companion object {
         lateinit var context: Context
     }
 
@@ -37,12 +37,12 @@ class MainActivityFactura : AppCompatActivity() {
     private lateinit var repository: FacturaRepositoryImpl
 
     //SINGLETON
-    // Instancia del servicio de mock (Retromock) usando el MockService (@MockCircular)
+    // Instancia del mock (Retromock) usando el MockService (@MockCircular)
     private val mockFacturaService: MockService by lazy {
         RetrofitClient.retromock.create(MockService::class.java)
     }
 
-    // Instancia del servicio real (Retrofit) usando el servicio real (api)
+    // Instancia de (Retrofit) usando la (api)
     private val apiFacturaService: FacturaService by lazy {
         RetrofitClient.instance.create(FacturaService::class.java)
     }
@@ -54,7 +54,7 @@ class MainActivityFactura : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        // Inicializar el contexto en RetrofitClient para usar Retromock correctamente
+        // Inicializar el contexto en RetrofitClient para usar Retromock correctamente (prueba)
         //RetrofitClient.initContext(this)
 
         // Inicializar el ViewModel antes de cualquier acceso a él
@@ -71,9 +71,7 @@ class MainActivityFactura : AppCompatActivity() {
         // Inicializar SharedPreferences antes de su uso
         sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
-        // Restablecer filtros a los valores por defecto al iniciar
         restablecerFiltrosPorDefecto()
-
 
         // Inicializar el RecyclerView
         facturaAdapter = FacturaAdapter(emptyList(), this)
@@ -82,10 +80,10 @@ class MainActivityFactura : AppCompatActivity() {
 
         // Cargar facturas de acuerdo con el estado del switch
         if (MainActivityPortada.mocksEnabled) {
-            // Si los mocks están activados, usar el servicio simulado
+            // Si los mocks están activados, usar el Mock
             gestionarCargarFacturasDesdeMock()
         } else {
-            // Si los mocks están desactivados, usar el servicio real (API)
+            // Si los mocks están desactivados, usar la (API)
             gestionarCargarFacturasDesdeApi()
         }
 
@@ -99,7 +97,7 @@ class MainActivityFactura : AppCompatActivity() {
             displayNoFacturasMessage(facturas.isEmpty())
         }
 
-        // Botón para navegar a la Activity de filtros
+        // Botón para navegar a los filtros
         binding.imageView.setOnClickListener {
             val intent = Intent(this, MainActivityFiltroFactura::class.java)
             startActivity(intent)
@@ -157,12 +155,12 @@ class MainActivityFactura : AppCompatActivity() {
         }
     }
 
-    // Función para gestionar la carga de facturas desde la API real
+    // Función para gestionar la carga de facturas desde la API
     private fun gestionarCargarFacturasDesdeApi() {
         try {
             val esPrimeraCarga = sharedPreferences.getBoolean("primeraCarga", true)
 
-            // Obtener los filtros del Intent
+            // Obtener los filtros del Intent provenientes del ActivityFiltroFactura
             val estados = intent.getStringArrayListExtra("estados") ?: emptyList()
             val valorMaximo = intent.getDoubleExtra("valorMaximo", Double.MAX_VALUE).toInt()
             val fechaDesdeMillis = intent.getLongExtra("fechaDesde", 0L)
@@ -203,10 +201,10 @@ class MainActivityFactura : AppCompatActivity() {
     // Restablecer los filtros a sus valores por defecto
     private fun restablecerFiltrosPorDefecto() {
         val editor = sharedPreferences.edit()
-        editor.putStringSet("estados", emptySet()) // Restablecer estados
-        editor.putInt("valorMaximo", 0) // Restablecer valor máximo
-        editor.putLong("fechaDesde", 0L) // Restablecer fecha desde
-        editor.putLong("fechaHasta", Long.MAX_VALUE) // Restablecer fecha hasta
+        editor.putStringSet("estados", emptySet())
+        editor.putInt("valorMaximo", 0)
+        editor.putLong("fechaDesde", 0L)
+        editor.putLong("fechaHasta", Long.MAX_VALUE)
         editor.apply()
     }
 
@@ -220,7 +218,7 @@ class MainActivityFactura : AppCompatActivity() {
     override fun onBackPressed() {
         val sharedPreferences = getSharedPreferences("FiltroFacturasPrefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply() // Limpia los filtros
-        super.onBackPressed() // Regresa a la actividad anterior
+        super.onBackPressed() // Regresa al Activity anterior
     }
 
 }
